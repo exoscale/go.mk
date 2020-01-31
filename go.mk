@@ -1,0 +1,75 @@
+GO ?=				$(shell which go)
+
+GO_PKGS ?= 			$(shell $(GO) list ./...)
+
+GO_LD_FLAGS ?=		-ldflags "-X main.gitCommit=$(GIT_REVISION)           \
+				              -X main.gitBranch=$(GIT_BRANCH)             \
+				              -X main.buildDate=$(shell date -u +%FT%T%z) \
+				              -X main.version=$(VERSION)"
+
+GO_TEST_PKGS ?= 	$(shell test -f go.mod && $(GO) list -f \
+						'{{ if or .TestGoFiles .XTestGoFiles }}{{ .ImportPath }}{{ end }}' \
+						$(GO_PKGS))
+
+GO_TEST_TIMEOUT ?= 	15s
+
+GO_TAGS ?=
+
+GO_BIN_OUTPUT_DIR ?= $(CURDIR)/bin
+
+GOLANGCI_VERSION ?=  v1.23.1
+
+# ---
+
+export GO111MODULE=on
+
+# ---
+
+.PHONY: vet
+vet: ## Run go vet
+	$(GO) vet ./...
+
+
+.PHONY: lint
+lint: installgolangcilint ## Lint go code
+	golangci-lint run ./...
+
+
+.PHONY: test, test-verbose
+test: 				                ## Run go tests in silent mode
+test-verbose: GO_TEST_EXTRA_ARGS=-v ## Run go tests in verbose mode 
+test test-verbose:
+	$(GO) test                      \
+		-race                       \
+		-timeout $(GO_TEST_TIMEOUT) \
+		$(GO_TEST_EXTRA_ARGS)       \
+		$(GO_TEST_PKGS)
+
+
+.PHONY: build
+build-verbose: GO_BUILD_EXTRA_ARGS=-v  ## Builds a go binary in verbose mode
+build: $(GO_BIN_OUTPUT_DIR)			   ## Builds a go binary in silent mode
+	$(GO) build                 \
+		$(GO_BUILD_EXTRA_ARGS)  \
+		$(GO_LD_FLAGS)          \
+		$(GO_TAGS)              \
+		-o $(GO_BIN_OUTPUT_DIR)
+
+
+.PHONY: clean
+clean::	## Removes compiled go binaries
+	rm -rf $(GO_BIN_OUTPUT_DIR)
+
+
+.PHONY: $(GO_BIN_OUTPUT_DIR)
+$(GO_BIN_OUTPUT_DIR): 
+	test -d $(GO_BIN_OUTPUT_DIR) || mkdir $(GO_BIN_OUTPUT_DIR)
+
+
+.PHONY: installgolangcilint
+.ONESHELL:
+installgolangcilint: ## Installs golangcilint (https://golangci.com/)
+	if [ ! -f $(shell go env GOPATH)/bin/golangci-lint ]; then
+		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | \
+			sh -s -- -b $(shell go env GOPATH)/bin $(GOLANGCI_VERSION)
+	fi
