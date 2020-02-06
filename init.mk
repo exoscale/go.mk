@@ -1,4 +1,4 @@
-_VERSION_DIGIT := $(shell echo '$(MAKE_VERSION)' | tr -d .)
+_VERSION_DIGIT := $(shell expr substr $(shell printf '%s%01d' $(shell echo '$(MAKE_VERSION)' | tr -d .)) 1 3)
 _VERSION_COMPARE := $(shell echo $$(( $(_VERSION_DIGIT) >= 382)))
 
 ifeq ($(_VERSION_COMPARE),0)
