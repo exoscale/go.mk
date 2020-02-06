@@ -37,7 +37,7 @@ lint: installgolangcilint ## Lint go code
 
 .PHONY: test, test-verbose
 test: 				                ## Run go tests in silent mode
-test-verbose: GO_TEST_EXTRA_ARGS=-v ## Run go tests in verbose mode 
+test-verbose: GO_TEST_EXTRA_ARGS=-v ## Run go tests in verbose mode
 test test-verbose:
 	$(GO) test                      \
 		-race                       \
@@ -46,9 +46,9 @@ test test-verbose:
 		$(GO_TEST_PKGS)
 
 
-.PHONY: build
-build-verbose: GO_BUILD_EXTRA_ARGS=-v  ## Builds a go binary in verbose mode
-build: $(GO_BIN_OUTPUT_DIR)			   ## Builds a go binary in silent mode
+.PHONY: build, build-verbose
+build-verbose: GO_BUILD_EXTRA_ARGS=-v  		## Builds a go binary in verbose mode
+build build-verbose: $(GO_BIN_OUTPUT_DIR)	## Builds a go binary in silent mode
 	$(GO) build                 \
 		$(GO_BUILD_EXTRA_ARGS)  \
 		$(GO_LD_FLAGS)          \
@@ -62,7 +62,7 @@ clean::	## Removes compiled go binaries
 
 
 .PHONY: $(GO_BIN_OUTPUT_DIR)
-$(GO_BIN_OUTPUT_DIR): 
+$(GO_BIN_OUTPUT_DIR):
 	test -d $(GO_BIN_OUTPUT_DIR) || mkdir $(GO_BIN_OUTPUT_DIR)
 
 
