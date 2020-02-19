@@ -26,6 +26,7 @@ all: help
 include $(INCLUDE_PATH)/version.mk
 include $(INCLUDE_PATH)/os.mk
 include $(INCLUDE_PATH)/go.mk
+include $(INCLUDE_PATH)/coverage.mk
 
 # ---
 
