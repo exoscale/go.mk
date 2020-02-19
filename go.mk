@@ -19,7 +19,8 @@ GO_TAGS ?=
 
 GO_BIN_OUTPUT_DIR ?= $(CURDIR)/bin
 
-GOLANGCI_VERSION ?=  v1.23.1
+GOLANGCI_VERSION ?= v1.23.1
+GOLANGCI_TIMEOUT ?= 5m
 
 # ---
 
@@ -34,7 +35,7 @@ vet: ## Run go vet
 
 .PHONY: lint
 lint: installgolangcilint ## Lint go code
-	golangci-lint run ./...
+	golangci-lint run --timeout $(GOLANGCI_TIMEOUT) ./...
 
 
 .PHONY: test, test-verbose
