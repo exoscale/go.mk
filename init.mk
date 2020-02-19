@@ -15,10 +15,6 @@ ifndef INCLUDE_PATH
 	endif
 endif
 
-include $(INCLUDE_PATH)/version.mk
-include $(INCLUDE_PATH)/os.mk
-include $(INCLUDE_PATH)/go.mk
-
 # ---
 
 .DEFAULT: help
@@ -27,6 +23,11 @@ all: help
 
 # ---
 
+include $(INCLUDE_PATH)/version.mk
+include $(INCLUDE_PATH)/os.mk
+include $(INCLUDE_PATH)/go.mk
+
+# ---
 
 .PHONY: dumpvariables
 dumpvariables: ## Dump configuration variables
