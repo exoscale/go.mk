@@ -2,8 +2,8 @@ GO ?=				$(shell which go)
 
 GO_PKGS ?= 			$(shell $(GO) list ./...)
 
-GO_LD_FLAGS ?=		-ldflags "-X main.gitCommit=$(GIT_REVISION)           \
-				              -X main.gitBranch=$(GIT_BRANCH)             \
+GO_LD_FLAGS ?=		-ldflags "-X main.commit=$(GIT_REVISION)              \
+				              -X main.branch=$(GIT_BRANCH)                \
 				              -X main.buildDate=$(shell date -u +%FT%T%z) \
 				              -X main.version=$(VERSION)"
 
