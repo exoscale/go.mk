@@ -1,8 +1,8 @@
-_VERSION_DIGIT := $(shell expr substr $(shell printf '%s%01d' $(shell echo '$(MAKE_VERSION)' | tr -d .)) 1 3)
-_VERSION_COMPARE := $(shell echo $$(( $(_VERSION_DIGIT) >= 382)))
+_VERSION_DIGIT := $(shell expr substr $(shell echo '$(MAKE_VERSION)' | tr -d .) 1 1)
+_VERSION_COMPARE := $(shell echo $$(( $(_VERSION_DIGIT) >= 4)))
 
 ifeq ($(_VERSION_COMPARE),0)
-$(error "Your Make version ($(MAKE_VERSION)) is too old. Gnu make 3.8.2+ is required, 4+ recommended.")
+$(error "Your Make version ($(MAKE_VERSION)) is too old. Gnu make 4+ is required.")
 endif
 
 # ---
