@@ -24,6 +24,8 @@ GO_BIN_OUTPUT_DIR ?= $(CURDIR)/bin
 GOLANGCI_VERSION ?= v1.23.1
 GOLANGCI_TIMEOUT ?= 5m
 
+GO_MAIN_PKG_PATH ?= .
+
 # ---
 
 export GO111MODULE=on
@@ -60,7 +62,8 @@ build build-verbose: $(GO_BIN_OUTPUT_DIR) createvendordir
 		$(GO_LD_FLAGS)          \
 		$(GO_TAGS)              \
 		-mod $(GO_VENDOR_DIR)   \
-		-o $(GO_BIN_OUTPUT_DIR)
+		-o $(GO_BIN_OUTPUT_DIR) \
+		$(GO_MAIN_PKG_PATH)
 
 
 .PHONY: clean
