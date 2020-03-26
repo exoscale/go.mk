@@ -1,5 +1,7 @@
 GO ?=				$(shell which go)
 
+GOIMPORTS ?= 		$(shell which goimports)
+
 GO_PKGS ?= 			$(shell $(GO) list ./...)
 
 GO_LD_FLAGS ?=		-ldflags "-X main.commit=$(GIT_REVISION)              \
@@ -84,3 +86,11 @@ installgolangcilint: ## Installs golangcilint (https://golangci.com/)
 createvendordir:
 	test -d $(GO_VENDOR_DIR) || mkdir $(GO_VENDOR_DIR)
 	go mod $(GO_VENDOR_DIR)
+
+
+.PHONY: fmt
+.ONESHELL:
+fmt:  ## Formats source files
+	@for d in $(shell go list -f '{{.Dir}}' ./...);do
+		$(GOIMPORTS) -w $$d/*.go
+	done
