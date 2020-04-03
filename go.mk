@@ -42,7 +42,7 @@ lint: installgolangcilint ## Lint go code
 	golangci-lint run --timeout $(GOLANGCI_TIMEOUT) ./...
 
 
-.PHONY: test, test-verbose
+.PHONY: test test-verbose
 test: 				                ## Run go tests in silent mode
 test-verbose: GO_TEST_EXTRA_ARGS=-v ## Run go tests in verbose mode
 test test-verbose:
@@ -53,7 +53,7 @@ test test-verbose:
 		$(GO_TEST_PKGS)
 
 
-.PHONY: build, build-verbose
+.PHONY: build build-verbose
 build-verbose: GO_BUILD_EXTRA_ARGS=-v  						## Builds a go binary in verbose mode
 build:            											## Builds a go binary in silent mode
 build build-verbose: $(GO_BIN_OUTPUT_DIR) createvendordir
