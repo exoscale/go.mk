@@ -48,6 +48,7 @@ test-verbose: GO_TEST_EXTRA_ARGS=-v ## Run go tests in verbose mode
 test test-verbose:
 	$(GO) test                      \
 		-race                       \
+		-mod $(GO_VENDOR_DIR)       \
 		-timeout $(GO_TEST_TIMEOUT) \
 		$(GO_TEST_EXTRA_ARGS)       \
 		$(GO_TEST_PKGS)
