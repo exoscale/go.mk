@@ -42,7 +42,7 @@ dumpvariables: ## Dump configuration variables
 	@echo ""
 	@echo "GIT_REVISION            = $(GIT_REVISION)"
 	@echo "GIT_BRANCH              = $(GIT_BRANCH)"
-	@echo "VERSION                 = $(_VERSION)"
+	@echo "VERSION                 = $(VERSION)"
 	@echo ""
 	@echo "GO                      = $(GO)"
 	@echo "GO_VERSION              = $(shell $(GO) version)"
