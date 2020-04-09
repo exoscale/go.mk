@@ -39,7 +39,7 @@ vet: ## Run go vet
 
 .PHONY: lint
 lint: installgolangcilint ## Lint go code
-	golangci-lint run --timeout $(GOLANGCI_TIMEOUT) ./...
+	golangci-lint run --modules-download-mode=vendor --timeout $(GOLANGCI_TIMEOUT) ./...
 
 
 .PHONY: test test-verbose
