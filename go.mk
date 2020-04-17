@@ -98,3 +98,7 @@ fmt:  ## Formats source files
 	@for d in $(shell go list -f '{{.Dir}}' ./...);do
 		$(GOIMPORTS) -w $$d/*.go
 	done
+
+.PHONY: git-tag
+git-tag: ## Creates a git tag
+	@$(INCLUDE_PATH)/git-tag.sh
