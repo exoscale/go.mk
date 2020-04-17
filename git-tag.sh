@@ -41,6 +41,8 @@ validate "$tag"
 
 tag=$(echo "$tag" | cut -c2-)
 
+# The only way to be sh cross platform between MacOS, Linux...etc
+# a.b.c represents a tag version e.g: "1.0.2"
 a="${tag%????}"
 tmp="${tag%??}"
 b="${tmp#??}"
