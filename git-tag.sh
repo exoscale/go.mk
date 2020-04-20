@@ -1,7 +1,7 @@
 #!/bin/sh
 
 validate() {
-    validation=$(echo "$1" | grep -oE '^v([0-9])\.([0-9])\.([0-9])$' || echo "$1" | grep -oE '^([0-9])\.([0-9])\.([0-9])$')
+    validation=$(echo "$1" | grep -oE '^v?([0-9])\.([0-9])\.([0-9])$')
     if [ -z "$validation" ]
     then
         echo "error latest tag \"$1\" invalid format: expected vX.X.X or X.X.X"
