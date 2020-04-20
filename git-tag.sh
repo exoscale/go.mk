@@ -53,6 +53,11 @@ git_tag() {
     printf "Describe your tag: "
     read -r tag_description
 
+    if [ "$tag_description" = "" ]
+    then
+        tag_description="$1"
+    fi
+
     git tag -a "$1" -m "$tag_description" && echo "Done! Tag successfuly applied"
 }
 
