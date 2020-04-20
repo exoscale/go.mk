@@ -59,12 +59,12 @@ test test-verbose:
 build-verbose: GO_BUILD_EXTRA_ARGS=-v  						## Builds a go binary in verbose mode
 build:            											## Builds a go binary in silent mode
 build build-verbose: $(GO_BIN_OUTPUT_DIR) createvendordir
-	$(GO) build                 						\
-		$(GO_BUILD_EXTRA_ARGS)  						\
-		$(GO_LD_FLAGS)          						\
-		$(GO_TAGS)              						\
-		-mod $(GO_VENDOR_DIR)   						\
-		-o $(GO_BIN_OUTPUT_DIR)/$(GO_BIN_OUTPUT_NAME) 	\
+	$(GO) build                                       \
+		$(GO_BUILD_EXTRA_ARGS)                        \
+		$(GO_LD_FLAGS)                                \
+		$(GO_TAGS)                                    \
+		-mod $(GO_VENDOR_DIR)                         \
+		-o $(GO_BIN_OUTPUT_DIR)/$(GO_BIN_OUTPUT_NAME) \
 		$(GO_MAIN_PKG_PATH)
 
 
