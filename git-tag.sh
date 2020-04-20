@@ -4,8 +4,11 @@ validate() {
     validation=$(echo "$1" | grep -oE '^v?([0-9])\.([0-9])\.([0-9])$')
     if [ -z "$validation" ]
     then
-        echo "error latest tag \"$1\" invalid format: expected vX.X.X or X.X.X"
-        exit 1
+        echo "Warning! Latest tag \"$1\" invalid format: expected vX.X.X or X.X.X"
+        printf "Enter your next tag manually: "
+        read -r manual_tag
+        git_tag "$manual_tag"
+        exit 0
     fi
 }
 
@@ -46,6 +49,13 @@ ask_v_versioning() {
     fi
 }
 
+git_tag() {
+    printf "Describe your tag: "
+    read -r tag_description
+
+    git tag -a "$1" -m "$tag_description" && echo "Done! Tag successfuly applied"
+}
+
 tag=$(git describe --abbrev=0 --tags 2>/dev/null || echo v0.0.0)
 validate "$tag"
 
@@ -72,7 +82,5 @@ bugfix="$v$a.$b.$((c+1))"
 
 select_menu
 
-printf "Describe your tag: "
-read -r tag_description
+git_tag "$tag"
 
-git tag -a "$tag" -m "$tag_description" && echo "Done! Tag successfuly applied"
