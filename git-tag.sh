@@ -50,9 +50,10 @@ tag=$(git describe --abbrev=0 --tags 2>/dev/null || echo v0.0.0)
 validate "$tag"
 
 v=""
-if [ "$tag" = "v*" ]
+if [ "$(echo "$tag" | cut -c -1)" = "v" ]
 then
     tag=$(echo "$tag" | cut -c2-)
+    v="v"
 else
     ask_v_versioning
 fi
