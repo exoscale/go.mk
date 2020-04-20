@@ -37,8 +37,8 @@ select_menu() {
 }
 
 ask_v_versioning() {
-    echo "Current tag version: $tag"
-    printf "Would you like to add \"v\" suffix to your next tag version?: "
+    echo "Latest tagged version: $tag"
+    printf "Would you like to add a \"v\" prefix to your next version tag? (y/N) "
     read -r answer
     if [ "$answer" = "y" ]
     then
