@@ -74,7 +74,7 @@ clean::	## Removes compiled go binaries
 
 
 .PHONY: clean-gocache
-clean-gocache: ## Removes the entire go caches
+clean-gocache: ## Removes go's module and test cache
 	$(GO) clean -cache -testcache
 
 
