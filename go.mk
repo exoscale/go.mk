@@ -73,6 +73,11 @@ clean::	## Removes compiled go binaries
 	rm -rf $(GO_BIN_OUTPUT_DIR)
 
 
+.PHONY: clean-gocache
+clean-gocache: ## Removes go's module and test cache
+	$(GO) clean -cache -testcache
+
+
 .PHONY: $(GO_BIN_OUTPUT_DIR)
 $(GO_BIN_OUTPUT_DIR):
 	test -d $(GO_BIN_OUTPUT_DIR) || mkdir $(GO_BIN_OUTPUT_DIR)
