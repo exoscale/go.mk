@@ -72,9 +72,11 @@ build build-verbose: $(GO_BIN_OUTPUT_DIR) createvendordir
 clean::	## Removes compiled go binaries
 	rm -rf $(GO_BIN_OUTPUT_DIR)
 
+
 .PHONY: clean-gocache
 clean-gocache: ## Removes the entire go caches
 	$(GO) clean -cache -testcache
+
 
 .PHONY: $(GO_BIN_OUTPUT_DIR)
 $(GO_BIN_OUTPUT_DIR):
