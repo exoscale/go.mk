@@ -22,8 +22,9 @@ GO_TAGS ?=
 GO_BIN_OUTPUT_DIR ?= $(CURDIR)/bin
 GO_BIN_OUTPUT_NAME ?=
 
-GOLANGCI_VERSION ?= v1.24.0
-GOLANGCI_TIMEOUT ?= 5m
+GOLANGCI_VERSION	?= v1.24.0
+GOLANGCI_TIMEOUT	?= 5m
+GOLANGCI_EXTRA_ARGS	?=
 
 GO_MAIN_PKG_PATH ?= .
 
@@ -40,7 +41,7 @@ vet: ## Run go vet
 
 .PHONY: lint
 lint: installgolangcilint ## Lint go code
-	golangci-lint run --modules-download-mode=$(GO_VENDOR_DIR) --timeout $(GOLANGCI_TIMEOUT) ./...
+	golangci-lint run --modules-download-mode=$(GO_VENDOR_DIR) --timeout $(GOLANGCI_TIMEOUT) $(GOLANGCI_EXTRA_ARGS) ./...
 
 
 .PHONY: test test-verbose
