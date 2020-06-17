@@ -1,7 +1,7 @@
 #!/bin/sh
 
 validate() {
-    validation=$(echo "$1" | grep -oE '^v?([0-9])\.([0-9])\.([0-9])$')
+    validation=$(echo "$1" | grep -oE '^v?([0-9]+)\.([0-9]+)\.([0-9]+)$')
     if [ -z "$validation" ]
     then
         echo "Warning! Latest tag \"$1\" invalid format: expected vX.X.X or X.X.X"
@@ -73,13 +73,12 @@ else
     ask_v_versioning
 fi
 
-
 # The only way to be sh cross platform between MacOS, Linux...etc
 # a.b.c represents a tag version e.g: "1.0.2"
-a="${tag%????}"
-tmp="${tag%??}"
-b="${tmp#??}"
-c="${tag#????}"
+remainder="$tag"
+a="${remainder%%.*}"; remainder="${remainder#*.}"
+b="${remainder%%.*}"; remainder="${remainder#*.}"
+c="${remainder%%.*}"; remainder="${remainder#*.}"
 
 major="$v$((a+1)).0.0"
 minor="$v$a.$((b+1)).0"
@@ -88,4 +87,3 @@ bugfix="$v$a.$b.$((c+1))"
 select_menu
 
 git_tag "$tag"
-
