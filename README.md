@@ -132,6 +132,11 @@ And then:
       [...]
 
 
+#### `release`
+
+The `release` target requires a `PROJECT_URL` Makefile variable set to the HTTP
+URL of the project repository, e.g. `https://github.com/alice/cool_project`.
+
 ## Extendable targets
 
 An extendable target is a `make` target (`build`, `vet`, `lint` ...) which can

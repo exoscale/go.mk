@@ -4,7 +4,7 @@ GO_COVERAGE_DIR ?= $(CURDIR)/coverage
 
 .PHONY: test-coverage
 .ONESHELL:
-test-coverage: $(GO_COVERAGE_DIR) run-test-with-coverage gen-coverage-profiles ## Run tests with coverage enabled
+test-coverage: $(GO_COVERAGE_DIR) run-test-with-coverage gen-coverage-profiles ## Runs tests with coverage enabled
 
 
 .PHONY: $(GO_COVERAGE_DIR)
