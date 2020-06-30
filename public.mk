@@ -10,6 +10,7 @@ installgoreleaser: ## Installs GoReleaser (https://goreleaser.com/)
 	fi
 
 .PHONY: release
+.ONESHELL:
 release: SHELL:=/bin/bash
 release: installgoreleaser ## Releases new project version using `goreleaser`
 	if [ -z "$(PROJECT_URL)" ] ; then
