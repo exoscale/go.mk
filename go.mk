@@ -35,18 +35,18 @@ export GO111MODULE=on
 # ---
 
 .PHONY: vet
-vet: ## Run go vet
+vet: ## Runs `go vet`
 	$(GO) vet ./...
 
 
 .PHONY: lint
-lint: installgolangcilint ## Lint go code
+lint: installgolangcilint ## Lints Go code
 	golangci-lint run --modules-download-mode=$(GO_VENDOR_DIR) --timeout $(GOLANGCI_TIMEOUT) $(GOLANGCI_EXTRA_ARGS) ./...
 
 
 .PHONY: test test-verbose
-test: 				                ## Run go tests in silent mode
-test-verbose: GO_TEST_EXTRA_ARGS=-v ## Run go tests in verbose mode
+test: 				                ## Runs Go tests in silent mode
+test-verbose: GO_TEST_EXTRA_ARGS=-v ## Runs Go tests in verbose mode
 test test-verbose:
 	$(GO) test                      \
 		-race                       \
@@ -57,8 +57,8 @@ test test-verbose:
 
 
 .PHONY: build build-verbose
-build-verbose: GO_BUILD_EXTRA_ARGS=-v  						## Builds a go binary in verbose mode
-build:            											## Builds a go binary in silent mode
+build-verbose: GO_BUILD_EXTRA_ARGS=-v  						## Builds a Go binary in verbose mode
+build:            											## Builds a Go binary in silent mode
 build build-verbose: $(GO_BIN_OUTPUT_DIR) createvendordir
 	$(GO) build                                       \
 		$(GO_BUILD_EXTRA_ARGS)                        \
@@ -70,12 +70,12 @@ build build-verbose: $(GO_BIN_OUTPUT_DIR) createvendordir
 
 
 .PHONY: clean
-clean::	## Removes compiled go binaries
+clean::	## Removes compiled Go binaries
 	rm -rf $(GO_BIN_OUTPUT_DIR)
 
 
 .PHONY: clean-gocache
-clean-gocache: ## Removes go's module and test cache
+clean-gocache: ## Removes Go's module and test cache
 	$(GO) clean -cache -testcache
 
 
@@ -101,11 +101,11 @@ createvendordir:
 
 .PHONY: fmt
 .ONESHELL:
-fmt:  ## Formats source files
+fmt:  ## Formats Go source files
 	@for d in $(shell go list -f '{{.Dir}}' ./...);do
 		$(GOIMPORTS) -w $$d/*.go
 	done
 
 .PHONY: git-tag
-git-tag: ## Creates a git tag
+git-tag: ## Creates a Git tag
 	@$(INCLUDE_PATH)/git-tag.sh

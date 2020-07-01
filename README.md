@@ -4,11 +4,13 @@
 
 This repository is an attempt to act as a GNU make common ground for exoscale's Go projects.
 
+
 ## Installation
 
 ### Requirements
 
 You need to use GNU make (also known as `gmake`) version 3.82+, ideally 4+.
+
 
 ### Adding the required git submodule
 
@@ -21,6 +23,7 @@ For more informations about git submodules please refer to the documentation
 page :
 
 - https://git-scm.com/book/en/v2/Git-Tools-Submodules
+
 
 ### Initializing go.mk
 
@@ -70,12 +73,14 @@ The output of `make dumpvariables` should look like this:
     GO_TAGS                 = 
     GO_BIN_OUTPUT_DIR       = /home/jerome/.go/src/github.com/[...]/bin
     
+
 ### Updating the submodule
 
 If ever you want to fetch new changes in `go.mk` and the git submodule is
 already installed, you can simply fetch updates by using the following command:
 
     git submodule update --remote go.mk
+
 
 ## Configuration
 
@@ -107,6 +112,31 @@ And then:
 Any variable you want to override must be declared BEFORE including `go.mk/init.mk`
 
 
+### "Public" targets
+
+If a *public* project (i.e. Open Source project repository hosted in a public
+GitHub) uses `go.mk`, it can include the `public.mk` Makefile to access
+public-only targets such as `release`, that calls [GoReleaser][goreleaser] in
+order to handle releases of the project according to the configuration set in
+the `.goreleaser.yml` file.
+
+    include ./go.mk/init.mk
+    include ./go.mk/public.mk
+
+And then:
+
+    ➜ make git-tag
+      # Set a new Git tag
+    ➜ git push --tags
+    ➜ make release
+      [...]
+
+
+#### `release`
+
+The `release` target requires a `PROJECT_URL` Makefile variable set to the HTTP
+URL of the project repository, e.g. `https://github.com/alice/cool_project`.
+
 ## Extendable targets
 
 An extendable target is a `make` target (`build`, `vet`, `lint` ...) which can
@@ -134,3 +164,6 @@ And then call `make clean` and you should see something like this:
 
     rm -rf [...]
     I will be called as well
+
+
+[goreleaser]: https://goreleaser.com/

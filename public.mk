@@ -1,0 +1,20 @@
+GORELEASER_VERSION  ?= v0.138.0
+GORELEASER_OPTS     ?= --release-notes <(echo "See the [CHANGELOG](https://$(PACKAGE)/blob/v$(VERSION)/CHANGELOG.md) for details.")
+
+.PHONY: installgoreleaser
+.ONESHELL:
+installgoreleaser: ## Installs GoReleaser (https://goreleaser.com/)
+	if [ ! -f $(shell go env GOPATH)/bin/goreleaser ]; then
+		curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | \
+			sh -s -- -b $(shell go env GOPATH)/bin $(GORELEASER_VERSION)
+	fi
+
+.PHONY: release
+.ONESHELL:
+release: SHELL:=/bin/bash
+release: installgoreleaser ## Releases new project version using `goreleaser`
+	if [ -z "$(PROJECT_URL)" ] ; then
+		echo 'ERROR: Makefile variable PROJECT_URL must be set in order to use the "release" target'
+		exit 1
+	fi
+	goreleaser $(GORELEASER_OPTS)
