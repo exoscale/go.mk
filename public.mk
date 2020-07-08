@@ -1,5 +1,5 @@
 GORELEASER_VERSION  ?= v0.138.0
-GORELEASER_OPTS     ?= --release-notes <(echo "See the [CHANGELOG](https://$(PROJECT_URL)/blob/v$(VERSION)/CHANGELOG.md) for details.")
+GORELEASER_OPTS     ?= --release-notes <(echo "See the [CHANGELOG]($(PROJECT_URL)/blob/v$(VERSION)/CHANGELOG.md) for details.")
 
 .PHONY: installgoreleaser
 .ONESHELL:
