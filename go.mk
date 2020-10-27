@@ -18,7 +18,7 @@ GO_VENDOR_DIR ?=	vendor
 
 GO_TEST_TIMEOUT ?= 	15s
 
-GO_TAGS :=			-tags $(GO_TAGS)
+GO_TAGS ?=
 
 GO_BIN_OUTPUT_DIR	?= $(CURDIR)/bin
 GO_BIN_OUTPUT_NAME	?=
