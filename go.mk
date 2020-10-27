@@ -4,10 +4,11 @@ GOIMPORTS ?= 		$(shell which goimports)
 
 GO_PKGS ?= 			$(shell $(GO) list ./...)
 
-GO_LD_FLAGS ?=		-ldflags "-X main.commit=$(GIT_REVISION)              \
+GO_LD_FLAGS :=		-ldflags "-X main.commit=$(GIT_REVISION)              \
 							  -X main.branch=$(GIT_BRANCH)                \
 							  -X main.buildDate=$(shell date -u +%FT%T%z) \
-							  -X main.version=$(VERSION)"
+							  -X main.version=$(VERSION)				  \
+							  $(GO_LD_FLAGS)"
 
 GO_TEST_PKGS ?= 	$(shell test -f go.mod && $(GO) list -f \
 						'{{ if or .TestGoFiles .XTestGoFiles }}{{ .ImportPath }}{{ end }}' \
@@ -17,7 +18,7 @@ GO_VENDOR_DIR ?=	vendor
 
 GO_TEST_TIMEOUT ?= 	15s
 
-GO_TAGS ?=
+GO_TAGS :=			-tags $(GO_TAGS)
 
 GO_BIN_OUTPUT_DIR	?= $(CURDIR)/bin
 GO_BIN_OUTPUT_NAME	?=
