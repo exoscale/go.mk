@@ -14,8 +14,6 @@ GO_TEST_PKGS ?= 	$(shell test -f go.mod && $(GO) list -f \
 						'{{ if or .TestGoFiles .XTestGoFiles }}{{ .ImportPath }}{{ end }}' \
 						$(GO_PKGS))
 
-GO_VENDOR_DIR ?=	vendor
-
 GO_TEST_TIMEOUT ?= 	15s
 
 GO_TAGS ?=
@@ -42,7 +40,7 @@ vet: ## Runs `go vet`
 
 .PHONY: lint
 lint: installgolangcilint ## Lints Go code
-	golangci-lint run --modules-download-mode=$(GO_VENDOR_DIR) --timeout $(GOLANGCI_TIMEOUT) $(GOLANGCI_EXTRA_ARGS) ./...
+	golangci-lint run --modules-download-mode=vendor --timeout $(GOLANGCI_TIMEOUT) $(GOLANGCI_EXTRA_ARGS) ./...
 
 
 .PHONY: test test-verbose
@@ -51,7 +49,7 @@ test-verbose: GO_TEST_EXTRA_ARGS=-v ## Runs Go tests in verbose mode
 test test-verbose:
 	$(GO) test                      \
 		-race                       \
-		-mod $(GO_VENDOR_DIR)       \
+		-mod vendor                 \
 		-timeout $(GO_TEST_TIMEOUT) \
 		$(GO_TEST_EXTRA_ARGS)       \
 		$(GO_TEST_PKGS)
@@ -60,12 +58,11 @@ test test-verbose:
 .PHONY: build build-verbose
 build-verbose: GO_BUILD_EXTRA_ARGS=-v  						## Builds a Go binary in verbose mode
 build:            											## Builds a Go binary in silent mode
-build build-verbose: $(GO_BIN_OUTPUT_DIR) createvendordir
-	$(GO) build                                       \
+build build-verbose: $(GO) build                              \
 		$(GO_BUILD_EXTRA_ARGS)                        \
 		$(GO_LD_FLAGS)                                \
 		$(GO_TAGS)                                    \
-		-mod $(GO_VENDOR_DIR)                         \
+		-mod vendor                                   \
 		-o $(GO_BIN_OUTPUT_DIR)/$(GO_BIN_OUTPUT_NAME) \
 		$(GO_MAIN_PKG_PATH)
 
@@ -94,10 +91,9 @@ installgolangcilint: ## Installs golangcilint (https://golangci.com/)
 	fi
 
 
-.PHONY: createvendordir
-createvendordir:
-	test -d $(GO_VENDOR_DIR) || mkdir $(GO_VENDOR_DIR)
-	go mod $(GO_VENDOR_DIR)
+.PHONY: vendor
+vendor:
+	go mod vendor
 
 
 .PHONY: fmt
