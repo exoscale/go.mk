@@ -58,7 +58,8 @@ test test-verbose:
 .PHONY: build build-verbose
 build-verbose: GO_BUILD_EXTRA_ARGS=-v  						## Builds a Go binary in verbose mode
 build:            											## Builds a Go binary in silent mode
-build build-verbose: $(GO) build                              \
+build build-verbose: 
+	        $(GO) build                                   \
 		$(GO_BUILD_EXTRA_ARGS)                        \
 		$(GO_LD_FLAGS)                                \
 		$(GO_TAGS)                                    \
