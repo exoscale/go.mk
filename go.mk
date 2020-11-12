@@ -59,7 +59,7 @@ test test-verbose:
 build-verbose: GO_BUILD_EXTRA_ARGS=-v  						## Builds a Go binary in verbose mode
 build:            											## Builds a Go binary in silent mode
 build build-verbose: 
-	        mkdir -p $(GO_BIN_OUTPUT_DIR)                 \
+	        mkdir -p $(GO_BIN_OUTPUT_DIR)                 
 	        $(GO) build                                   \
 		$(GO_BUILD_EXTRA_ARGS)                        \
 		$(GO_LD_FLAGS)                                \
