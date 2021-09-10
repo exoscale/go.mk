@@ -108,3 +108,8 @@ fmt:  ## Formats Go source files
 .PHONY: git-tag
 git-tag: ## Creates a Git tag
 	@$(INCLUDE_PATH)/git-tag.sh
+
+# Allow go.mk targets to be overrididden in external Makefiles:
+# https://newbedev.com/make-file-warning-overriding-commands-for-target
+%: %-default
+	@ true

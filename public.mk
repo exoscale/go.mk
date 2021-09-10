@@ -11,8 +11,8 @@ installgoreleaser: ## Installs GoReleaser (https://goreleaser.com/)
 
 .PHONY: release
 .ONESHELL:
-release: SHELL:=/bin/bash
-release: installgoreleaser ## Releases new project version using `goreleaser`
+release-default: SHELL:=/bin/bash
+release-default: installgoreleaser ## Releases new project version using `goreleaser`
 	if [ -z "$(PROJECT_URL)" ] ; then
 		echo 'ERROR: Makefile variable PROJECT_URL must be set in order to use the "release" target'
 		exit 1
