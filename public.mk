@@ -1,4 +1,4 @@
-GORELEASER_VERSION  ?= v0.169.0
+GORELEASER_VERSION  ?= v0.178.0
 GORELEASER_OPTS     ?= --rm-dist --release-notes <(echo "See the [CHANGELOG]($(PROJECT_URL)/blob/v$(VERSION)/CHANGELOG.md) for details.")
 
 .PHONY: installgoreleaser
