@@ -87,10 +87,7 @@ $(GO_BIN_OUTPUT_DIR):
 .PHONY: installgolangcilint
 .ONESHELL:
 installgolangcilint: ## Installs golangcilint (https://golangci.com/)
-	if [ ! -f $(shell go env GOPATH)/bin/golangci-lint ]; then
-		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | \
-			sh -s -- -b $(shell go env GOPATH)/bin $(GOLANGCI_VERSION)
-	fi
+  go install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_VERSION)
 
 
 .PHONY: vendor
