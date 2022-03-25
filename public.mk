@@ -4,7 +4,7 @@ GORELEASER_OPTS     ?= --rm-dist --release-notes <(echo "See the [CHANGELOG]($(P
 .PHONY: installgoreleaser
 .ONESHELL:
 installgoreleaser: ## Installs GoReleaser (https://goreleaser.com/)
-  go install github.com/goreleaser/goreleaser@$(GORELEASER_VERSION)
+	go install github.com/goreleaser/goreleaser@$(GORELEASER_VERSION)
 
 .PHONY: release
 .ONESHELL:
