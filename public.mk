@@ -1,13 +1,10 @@
-GORELEASER_VERSION  ?= v0.178.0
+GORELEASER_VERSION  ?= v1.7.0
 GORELEASER_OPTS     ?= --rm-dist --release-notes <(echo "See the [CHANGELOG]($(PROJECT_URL)/blob/v$(VERSION)/CHANGELOG.md) for details.")
 
 .PHONY: installgoreleaser
 .ONESHELL:
 installgoreleaser: ## Installs GoReleaser (https://goreleaser.com/)
-	if [ ! -f $(shell go env GOPATH)/bin/goreleaser ]; then
-		curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | \
-			sh -s -- -b $(shell go env GOPATH)/bin $(GORELEASER_VERSION)
-	fi
+	go install github.com/goreleaser/goreleaser@$(GORELEASER_VERSION)
 
 .PHONY: release
 .ONESHELL:
