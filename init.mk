@@ -21,12 +21,15 @@ endif
 
 all: help
 
+# Allow default targets to be overridden in external Makefiles:
+%: %-default
+	@true
+
 # ---
 
 include $(INCLUDE_PATH)/version.mk
 include $(INCLUDE_PATH)/os.mk
 include $(INCLUDE_PATH)/go.mk
-include $(INCLUDE_PATH)/coverage.mk
 
 # ---
 
