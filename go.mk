@@ -1,112 +1,93 @@
-GO ?=				$(shell which go)
-
-GOIMPORTS ?= 		$(shell which goimports)
-
-GO_PKGS ?= 			$(shell $(GO) list ./...)
-
-GO_LD_FLAGS :=		-ldflags "-X main.commit=$(GIT_REVISION)              \
-							  -X main.branch=$(GIT_BRANCH)                \
-							  -X main.buildDate=$(shell date -u +%FT%T%z) \
-							  -X main.version=$(VERSION)				  \
-							  $(GO_LD_FLAGS)"
-
-GO_TEST_PKGS ?= 	$(shell test -f go.mod && $(GO) list -f \
-						'{{ if or .TestGoFiles .XTestGoFiles }}{{ .ImportPath }}{{ end }}' \
-						$(GO_PKGS))
-
-GO_TEST_TIMEOUT ?= 	15s
-
+## Project
+GO_MAIN_PKG_PATH ?= .
+GO_PKGS ?= $(shell $(GO) list ./...)
 GO_TAGS ?=
 
-GO_BIN_OUTPUT_DIR	?= $(CURDIR)/bin
-GO_BIN_OUTPUT_NAME	?=
+# Output
+GO_BIN_OUTPUT_DIR ?= $(CURDIR)/bin
+GO_BIN_OUTPUT_NAME ?=
 
-GOLANGCI_VERSION	?= v1.45.2
-GOLANGCI_TIMEOUT	?= 5m
-GOLANGCI_EXTRA_ARGS	?=
 
-GO_MAIN_PKG_PATH ?= .
+## GoLang
+GO ?= $(shell which go)
+ifeq ($(GO),)
+  $(error Failed to locate 'go' binary)
+endif
+GO_LD_FLAGS := \
+	-ldflags "-X main.commit=$(GIT_REVISION) \
+	-X main.branch=$(GIT_BRANCH) \
+	-X main.buildDate=$(shell date -u +%FT%T%z) \
+	-X main.version=$(VERSION) \
+	$(GO_LD_FLAGS)"
 
-# ---
+# Tests
+GO_TEST_PKGS ?= \
+	$(shell test -f go.mod && '$(GO)' list -f \
+	  '{{ if or .TestGoFiles .XTestGoFiles }}{{ .ImportPath }}{{ end }}' \
+	  $(GO_PKGS) \
+	)
+GO_TEST_TIMEOUT ?= 15s
 
+# Modules
 export GO111MODULE=on
 
-# ---
-
-.PHONY: vet
-vet: ## Runs `go vet`
-	$(GO) vet ./...
-
-
-.PHONY: lint
-lint: installgolangcilint ## Lints Go code
-	golangci-lint run --modules-download-mode=vendor --timeout $(GOLANGCI_TIMEOUT) $(GOLANGCI_EXTRA_ARGS) ./...
+# Dependencies
+include $(INCLUDE_PATH)/fmt.mk
+include $(INCLUDE_PATH)/lint.mk
+include $(INCLUDE_PATH)/coverage.mk
 
 
-.PHONY: test test-verbose
-test: 				                ## Runs Go tests in silent mode
-test-verbose: GO_TEST_EXTRA_ARGS=-v ## Runs Go tests in verbose mode
-test test-verbose:
-	$(GO) test                      \
-		-race                       \
-		-mod vendor                 \
-		-timeout $(GO_TEST_TIMEOUT) \
-		$(GO_TEST_EXTRA_ARGS)       \
-		$(GO_TEST_PKGS)
+## Targets
 
-
-.PHONY: build build-verbose
-build-verbose: GO_BUILD_EXTRA_ARGS=-v  						## Builds a Go binary in verbose mode
-build:            											## Builds a Go binary in silent mode
-build build-verbose:
-	        mkdir -p $(GO_BIN_OUTPUT_DIR)
-	        $(GO) build                                   \
-		$(GO_BUILD_EXTRA_ARGS)                        \
-		$(GO_LD_FLAGS)                                \
-		$(GO_TAGS)                                    \
-		-mod vendor                                   \
-		-o $(GO_BIN_OUTPUT_DIR)/$(GO_BIN_OUTPUT_NAME) \
-		$(GO_MAIN_PKG_PATH)
-
-
-.PHONY: clean
-clean::	## Removes compiled Go binaries
-	rm -rf $(GO_BIN_OUTPUT_DIR)
-
-
-.PHONY: clean-gocache
-clean-gocache: ## Removes Go's module and test cache
-	$(GO) clean -cache -testcache
-
-
-.PHONY: $(GO_BIN_OUTPUT_DIR)
-$(GO_BIN_OUTPUT_DIR):
-	test -d $(GO_BIN_OUTPUT_DIR) || mkdir $(GO_BIN_OUTPUT_DIR)
-
-
-.PHONY: installgolangcilint
-.ONESHELL:
-installgolangcilint: ## Installs golangcilint (https://golangci.com/)
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_VERSION)
-
+# Dependencies
 
 .PHONY: vendor
 vendor:
-	go mod vendor
+	'$(GO)' mod vendor
 
+# Source
 
-.PHONY: fmt
-.ONESHELL:
-fmt:  ## Formats Go source files
-	@for d in $(shell go list -f '{{.Dir}}' ./...);do
-		$(GOIMPORTS) -w $$d/*.go
-	done
+.PHONY: vet
+vet:
+	'$(GO)' vet ./...
 
-.PHONY: git-tag
-git-tag: ## Creates a Git tag
-	@$(INCLUDE_PATH)/git-tag.sh
+# Tests
 
-# Allow go.mk targets to be overrididden in external Makefiles:
-# https://newbedev.com/make-file-warning-overriding-commands-for-target
-%: %-default
-	@ true
+.PHONY: test test-verbose
+test:  ## Runs Go tests in silent mode
+test-verbose: GO_TEST_EXTRA_ARGS=-v  ## Runs Go tests in verbose mode
+test test-verbose:
+	'$(GO)' test \
+	  -race \
+	  -mod vendor \
+	  -timeout $(GO_TEST_TIMEOUT) \
+	  $(GO_TEST_EXTRA_ARGS) \
+	  $(GO_TEST_PKGS)
+
+# Build
+
+.PHONY: $(GO_BIN_OUTPUT_DIR)
+$(GO_BIN_OUTPUT_DIR):
+	mkdir -p '$(GO_BIN_OUTPUT_DIR)'
+
+.PHONY: build build-verbose
+build:  ## Builds a Go binary in silent mode
+build-verbose: GO_BUILD_EXTRA_ARGS=-v  ## Builds a Go binary in verbose mode
+build build-verbose: $(GO_BIN_OUTPUT_DIR)
+	'$(GO)' build \
+	  $(GO_BUILD_EXTRA_ARGS) \
+	  $(GO_LD_FLAGS) \
+	  $(GO_TAGS) \
+	  -mod vendor \
+	  -o '$(GO_BIN_OUTPUT_DIR)/$(GO_BIN_OUTPUT_NAME)' \
+	  '$(GO_MAIN_PKG_PATH)'
+
+# Clean
+
+.PHONY: clean
+clean::
+	rm -rf '$(GO_BIN_OUTPUT_DIR)'
+
+.PHONY: clean-gocache
+clean-gocache:
+	'$(GO)' clean -cache -testcache

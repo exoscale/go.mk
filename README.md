@@ -49,7 +49,7 @@ The output of `make help` should look like this:
     installgolangcilint            Installs golangcilint (https://golangci.com/)
     lint                           Lint go code
     test                           Run go tests in silent mode
-    test-verbose                   Run go tests in verbose mode 
+    test-verbose                   Run go tests in verbose mode
     vet                            Run go vet
 
 The output of `make dumpvariables` should look like this:
@@ -72,7 +72,7 @@ The output of `make dumpvariables` should look like this:
     GO_TEST_TIMEOUT         = 15s
     GO_TAGS                 = 
     GO_BIN_OUTPUT_DIR       = /home/jerome/.go/src/github.com/[...]/bin
-    
+
 
 ### Updating the submodule
 
