@@ -25,7 +25,6 @@ install-coverage-requirements:
 .ONESHELL:
 test-coverage: $(GO_COVERAGE_DIR) run-test-with-coverage gen-coverage-profiles
 
-.PHONY: $(GO_COVERAGE_DIR)
 $(GO_COVERAGE_DIR):
 	mkdir -p '$(GO_COVERAGE_DIR)'
 
@@ -46,7 +45,7 @@ GO_COVERAGE_OUTPUT_MERGED = $(GO_COVERAGE_DIR)/all.out
 GO_COVERAGE_OUTPUT_XML = $(GO_COVERAGE_DIR)/coverage.xml
 GO_COVERAGE_OUTPUT_HTML = $(GO_COVERAGE_DIR)/index.html
 .PHONY: gen-coverage-profiles
-gen-coverage-profiles: install-coverage-requirements
+gen-coverage-profiles $(GO_COVERAGE_OUTPUT_HTML): install-coverage-requirements
 	'$(GOCOVMERGE)' '$(GO_COVERAGE_DIR)'/*.out > '$(GO_COVERAGE_OUTPUT_MERGED)'
 	'$(GO)' tool cover -html '$(GO_COVERAGE_OUTPUT_MERGED)' -o '$(GO_COVERAGE_OUTPUT_HTML)'
 	'$(GOCOV)' convert '$(GO_COVERAGE_OUTPUT_MERGED)' | '$(GOCOV_XML)' > '$(GO_COVERAGE_OUTPUT_XML)'
