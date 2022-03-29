@@ -17,8 +17,7 @@ install-goimports:
 # Format
 
 .PHONY: fmt
-.ONESHELL:
 fmt: install-goimports
-	IFS=$$'\n'; for dir in $(shell go list -f '{{.Dir}}' ./...); do
-	  '$(GOIMPORTS)' -w "$${dir}"/*.go
+	IFS=$$'\n'; for dir in $(shell go list -f '{{.Dir}}' ./...); do \
+	  '$(GOIMPORTS)' -w "$${dir}"/*.go; \
 	done

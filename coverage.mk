@@ -12,33 +12,29 @@ GOCOVMERGE ?= $(shell which gocovmerge)
 # Dependencies
 
 .PHONY:
-.ONESHELL:
 install-coverage-requirements:
-	export GO111MODULE=off
-	'$(GO)' get github.com/axw/gocov/gocov
-	'$(GO)' get github.com/AlekSi/gocov-xml
-	'$(GO)' get github.com/wadey/gocovmerge
+	GO111MODULE=off '$(GO)' get github.com/axw/gocov/gocov
+	GO111MODULE=off '$(GO)' get github.com/AlekSi/gocov-xml
+	GO111MODULE=off '$(GO)' get github.com/wadey/gocovmerge
 
 # Coverage
 
 .PHONY: test-coverage
-.ONESHELL:
 test-coverage: $(GO_COVERAGE_DIR) run-test-with-coverage gen-coverage-profiles
 
 $(GO_COVERAGE_DIR):
 	mkdir -p '$(GO_COVERAGE_DIR)'
 
 .PHONY: run-test-with-coverage
-.ONESHELL:
 run-test-with-coverage:
-	for pkg in $(GO_TEST_PKGS); do
+	for pkg in $(GO_TEST_PKGS); do \
 	  '$(GO)' test \
 	    -race \
 	    -cover \
 	    -timeout $(GO_TEST_TIMEOUT) \
 	    -coverpkg=./... \
 	    -covermode=atomic \
-	    -coverprofile="$(GO_COVERAGE_DIR)/$$(echo $${pkg} | tr '/' '-').out" "$${pkg}"
+	    -coverprofile="$(GO_COVERAGE_DIR)/$$(echo $${pkg} | tr '/' '-').out" "$${pkg}"; \
 	done
 
 GO_COVERAGE_OUTPUT_MERGED = $(GO_COVERAGE_DIR)/all.out
