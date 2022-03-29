@@ -1,10 +1,20 @@
-## GoReleaser
-#  REF: https://github.com/goreleaser/goreleaser/
+## Release (publish) artifacts
+
+RELEASE_DIR := $(CURDIR)/release
+RELEASE_NOTES := $(RELEASE_DIR)/notes.md
+
+# GoReleaser
+# REF: https://github.com/goreleaser/goreleaser/
 
 GORELEASER_VERSION ?= v1.7.0
 GORELEASER_OPTS ?= \
 	--rm-dist \
-	--release-notes <(echo "See the [CHANGELOG]($(PROJECT_URL)/blob/v$(VERSION)/CHANGELOG.md) for details.")
+	--release-notes '$(RELEASE_NOTES)'
+ifneq ($(DRYRUN),)
+GORELEASER_OPTS += --snapshot
+else ifeq ($(VERSION), dev)
+GORELEASER_OPTS += --snapshot
+endif
 
 GORELEASER ?= $(shell which goreleaser)
 
@@ -21,6 +31,13 @@ install-goreleaser:
 
 # Release
 
+$(RELEASE_DIR):
+	mkdir -p '$(RELEASE_DIR)'
+
+.PHONY: release-notes
+release-notes $(RELEASE_NOTES): $(RELEASE_DIR)
+	echo 'See the [CHANGELOG]($(PROJECT_URL)/blob/v$(VERSION)/CHANGELOG.md) for details.' > '$(RELEASE_NOTES)'
+
 .PHONY: git-tag
 git-tag:
 ifdef DRYRUN
@@ -30,15 +47,23 @@ else
 endif
 
 .PHONY: release-default
-release-default:
+release-default: release-notes
+ifeq ($(VERSION), dev)
+	$(warning Releasing the 'dev' VERSION is forbidden; generating a local snapshot instead)
+endif
 ifndef VERSION
 	$(error Undefined variable VERSION)
-else ifeq ($(VERSION), dev)
-	$(error Releasing the 'dev' VERSION is forbidden)
 else ifndef PROJECT_URL
 	$(error Undefined variable PROJECT_URL)
-else ifdef DRYRUN
-	@echo 'DRY-RUN: '"'"'$(GORELEASER)'"'"' release $(GORELEASER_OPTS)'
+else ifndef API_VERSION
+	$(error Undefined variable API_VERSION)
 else
-	'$(GORELEASER)' release $(GORELEASER_OPTS)
+	API_VERSION='$(API_VERSION)' '$(GORELEASER)' release $(GORELEASER_OPTS)
 endif
+
+# Clean
+
+.PHONY: clean
+clean::
+	rm -rf '$(CURDIR)/dist'
+	rm -rf '$(RELEASE_DIR)'
