@@ -66,14 +66,13 @@ test test-verbose:
 
 # Build
 
-.PHONY: $(GO_BIN_OUTPUT_DIR)
 $(GO_BIN_OUTPUT_DIR):
 	mkdir -p '$(GO_BIN_OUTPUT_DIR)'
 
 .PHONY: build build-verbose
 build:  ## Builds a Go binary in silent mode
 build-verbose: GO_BUILD_EXTRA_ARGS=-v  ## Builds a Go binary in verbose mode
-build build-verbose: $(GO_BIN_OUTPUT_DIR)
+build build-verbose $(GO_BIN_OUTPUT_DIR)/$(GO_BIN_OUTPUT_NAME): $(GO_BIN_OUTPUT_DIR)
 	'$(GO)' build \
 	  $(GO_BUILD_EXTRA_ARGS) \
 	  $(GO_LD_FLAGS) \
