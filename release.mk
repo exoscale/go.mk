@@ -55,8 +55,6 @@ ifndef VERSION
 	$(error Undefined variable VERSION)
 else ifndef PROJECT_URL
 	$(error Undefined variable PROJECT_URL)
-else ifndef API_VERSION
-	$(error Undefined variable API_VERSION)
 else
 	API_VERSION='$(API_VERSION)' '$(GORELEASER)' release $(GORELEASER_OPTS)
 endif
