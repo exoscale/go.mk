@@ -34,8 +34,24 @@ install-goreleaser:
 $(RELEASE_DIR):
 	mkdir -p '$(RELEASE_DIR)'
 
+.PHONY: release-precheck
+release-precheck:
+ifneq ($(shell umask), 0022)
+	$(error Please set umask 0022 before performing a release)
+endif
+ifeq ($(VERSION), dev)
+	$(warning Releasing the 'dev' VERSION is forbidden; generating a local snapshot instead)
+endif
+ifndef VERSION
+	$(error Undefined variable VERSION)
+endif
+	@echo 'Release preliminary checks succeeded'
+
 .PHONY: release-notes
 release-notes $(RELEASE_NOTES): $(RELEASE_DIR)
+ifndef PROJECT_URL
+	$(error Undefined variable PROJECT_URL)
+endif
 	echo 'See the [CHANGELOG]($(PROJECT_URL)/blob/v$(VERSION)/CHANGELOG.md) for details.' > '$(RELEASE_NOTES)'
 
 .PHONY: git-tag
@@ -47,17 +63,8 @@ else
 endif
 
 .PHONY: release-default
-release-default: release-notes
-ifeq ($(VERSION), dev)
-	$(warning Releasing the 'dev' VERSION is forbidden; generating a local snapshot instead)
-endif
-ifndef VERSION
-	$(error Undefined variable VERSION)
-else ifndef PROJECT_URL
-	$(error Undefined variable PROJECT_URL)
-else
-	API_VERSION='$(API_VERSION)' '$(GORELEASER)' release $(GORELEASER_OPTS)
-endif
+release-default: release-precheck release-notes
+	'$(GORELEASER)' release $(GORELEASER_OPTS)
 
 # Clean
 
