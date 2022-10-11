@@ -22,7 +22,6 @@ install-golangci-lint:
 .PHONY: lint
 lint: install-golangci-lint
 	'$(GOLANGCI_LINT)' run \
-	  --modules-download-mode=vendor \
 	  --timeout $(GOLANGCI_LINT_TIMEOUT) \
 	  $(GOLANGCI_LINT_EXTRA_ARGS) \
 	  ./...
