@@ -59,7 +59,6 @@ test-verbose: GO_TEST_EXTRA_ARGS=-v  ## Runs Go tests in verbose mode
 test test-verbose:
 	'$(GO)' test \
 	  -race \
-	  -mod vendor \
 	  -timeout $(GO_TEST_TIMEOUT) \
 	  $(GO_TEST_EXTRA_ARGS) \
 	  $(GO_TEST_PKGS)
@@ -77,7 +76,6 @@ build build-verbose $(GO_BIN_OUTPUT_DIR)/$(GO_BIN_OUTPUT_NAME): $(GO_BIN_OUTPUT_
 	  $(GO_BUILD_EXTRA_ARGS) \
 	  $(GO_LD_FLAGS) \
 	  $(GO_TAGS) \
-	  -mod vendor \
 	  -o '$(GO_BIN_OUTPUT_DIR)/$(GO_BIN_OUTPUT_NAME)' \
 	  '$(GO_MAIN_PKG_PATH)'
 
