@@ -1,7 +1,7 @@
 ## GoLang CI Linter
 #  REF: https://github.com/golangci/golangci-lint/
 
-GOLANGCI_LINT_VERSION ?= v1.45.2
+GOLANGCI_LINT_VERSION ?= v1.51.2
 GOLANGCI_LINT_TIMEOUT ?= 5m
 GOLANGCI_LINT_EXTRA_ARGS ?=
 
