@@ -1,0 +1,13 @@
+name: "Pre-check"
+runs:
+  using: "composite"
+  shell: bash
+  steps:
+    - name: Lint
+      run: make lint
+    - name: Format
+      run: go fmt ./... && git diff --exit-code
+    - name: Vet
+      run: go vet ./...
+    - name: Vendoring
+      run: go mod tidy && go mod vendor && git diff --exit-code
