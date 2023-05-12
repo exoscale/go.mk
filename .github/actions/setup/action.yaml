@@ -8,3 +8,4 @@ runs:
         check-latest: true
     - name: install golangci-lint
       run: make install-golangci-lint
+      shell: bash
