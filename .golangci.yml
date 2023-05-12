@@ -5,7 +5,7 @@ linters-settings:
   golint:
     min-confidence: 0.3
   goimports:
-    local-prefixes: github.com
+    local-prefixes: github.com/exoscale
   revive:
     rules:
       - name: if-return
