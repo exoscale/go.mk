@@ -6,3 +6,5 @@ runs:
       with:
         go-version: 'stable'
         check-latest: true
+    - name: install golangci-lint
+      run: make install-golangci-lint
