@@ -3,6 +3,7 @@
 
 GOLANGCI_LINT_VERSION ?= v1.51.2
 GOLANGCI_LINT_TIMEOUT ?= 5m
+GOLANGCI_LINT_CONFIG ?= go.mk/.golangci.yml
 GOLANGCI_LINT_EXTRA_ARGS ?=
 
 GOLANGCI_LINT ?= $(shell which golangci-lint)
@@ -23,5 +24,6 @@ install-golangci-lint:
 lint: install-golangci-lint
 	'$(GOLANGCI_LINT)' run \
 	  --timeout $(GOLANGCI_LINT_TIMEOUT) \
+    --config $(GOLANGCI_LINT_CONFIG) \
 	  $(GOLANGCI_LINT_EXTRA_ARGS) \
 	  ./...
