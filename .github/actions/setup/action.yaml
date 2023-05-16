@@ -1,0 +1,11 @@
+name: "Setup Go"
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-go@v3
+      with:
+        go-version: 'stable'
+        check-latest: true
+    - name: install golangci-lint
+      run: make install-golangci-lint
+      shell: bash
