@@ -6,7 +6,7 @@ RELEASE_NOTES := $(RELEASE_DIR)/notes.md
 # GoReleaser
 # REF: https://github.com/goreleaser/goreleaser/
 
-GORELEASER_VERSION ?= v1.7.0
+GORELEASER_VERSION ?= v1.18.2
 GORELEASER_OPTS ?= \
 	--rm-dist \
 	--release-notes '$(RELEASE_NOTES)'
@@ -62,9 +62,26 @@ else
 	'$(INCLUDE_PATH)/git-tag.sh'
 endif
 
+# execute release procedures that don't require docker
+release-non-docker:
+	'$(GORELEASER)' release --config .goreleaser.non-docker.yml $(GORELEASER_OPTS)
+
+# execute release procedures inside a docker container
+release-in-docker:
+	docker run \
+	    --env GITHUB_TOKEN=$GITHUB_TOKEN \
+	    --volume=$(CURDIR):/src:ro \
+	    --volume=src-snapshot:/snapshot \
+	    --volume=build-cache:/root/.cache/go-build \
+	    --volume=go-mod-cache:/root/go/pkg/mod \
+	    registry.service.exoscale.net/exoscale/go.mk
+
+# execute release procedures that require docker
+release-docker:
+	'$(GORELEASER)' release --config .goreleaser.docker.yml $(GORELEASER_OPTS)
+
 .PHONY: release-default
-release-default: release-precheck release-notes
-	'$(GORELEASER)' release $(GORELEASER_OPTS)
+release-default: release-precheck release-notes release-in-docker release-docker
 
 # Clean
 
