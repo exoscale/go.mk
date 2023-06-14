@@ -64,7 +64,8 @@ endif
 
 # execute release procedures that don't require docker
 release-non-docker:
-	'$(GORELEASER)' release --config .goreleaser.non-docker.yml $(GORELEASER_OPTS)
+	cat .goreleaser.main.yml .goreleaser.non-docker.yml > .goreleaser.yml
+	'$(GORELEASER)' release $(GORELEASER_OPTS)
 
 # execute release procedures inside a docker container
 release-in-docker:
@@ -78,7 +79,8 @@ release-in-docker:
 
 # execute release procedures that require docker
 release-docker:
-	'$(GORELEASER)' release --config .goreleaser.docker.yml $(GORELEASER_OPTS)
+	cat .goreleaser.main.yml .goreleaser.docker.yml > .goreleaser.yml
+	'$(GORELEASER)' release $(GORELEASER_OPTS)
 
 .PHONY: release-default
 release-default: release-precheck release-notes release-in-docker release-docker
