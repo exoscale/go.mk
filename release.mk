@@ -70,7 +70,7 @@ release-non-docker:
 # execute release procedures inside a docker container
 release-in-docker:
 	docker run \
-	    --env GITHUB_TOKEN=$GITHUB_TOKEN \
+	    --env GITHUB_TOKEN=$(GITHUB_TOKEN) \
 	    --volume=$(CURDIR):/src:ro \
 	    --volume=src-snapshot:/snapshot \
 	    --volume=build-cache:/root/.cache/go-build \
