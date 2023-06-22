@@ -75,7 +75,7 @@ release-in-docker:
 	    --volume=src-snapshot:/snapshot \
 	    --volume=build-cache:/root/.cache/go-build \
 	    --volume=go-mod-cache:/root/go/pkg/mod \
-	    registry.service.exoscale.net/exoscale/go.mk
+	    $(EXOSCALE_DOCKER_REGISTRY)/exoscale/go.mk
 
 # execute release procedures that require docker
 release-docker: release-precheck release-notes
