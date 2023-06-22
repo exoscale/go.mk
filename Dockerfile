@@ -10,8 +10,10 @@ RUN set -xe \
     && rm -rf /var/lib/apt/lists/*
 
 COPY /release.mk /
-RUN GO=go make --makefile=/release.mk install-goreleaser
+RUN GO=go make --makefile=/release.mk install-goreleaser \
+    && rm -rf /root/go/pkg
 ENV PATH /root/go/bin:$PATH
+
 
 COPY release-in-docker.sh /
 

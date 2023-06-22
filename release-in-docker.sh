@@ -18,4 +18,4 @@ git clean -f
 git reset --hard HEAD
 
 export CGO_ENABLED=1
-make release-non-docker
+make release-inside-docker-container
