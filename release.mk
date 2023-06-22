@@ -63,7 +63,7 @@ else
 endif
 
 # execute release procedures that don't require docker
-release-non-docker:
+release-non-docker: release-precheck release-notes
 	cat .goreleaser.main.yml .goreleaser.non-docker.yml > .goreleaser.yml
 	'$(GORELEASER)' release $(GORELEASER_OPTS)
 
@@ -78,12 +78,12 @@ release-in-docker:
 	    registry.service.exoscale.net/exoscale/go.mk
 
 # execute release procedures that require docker
-release-docker:
+release-docker: release-precheck release-notes
 	cat .goreleaser.main.yml .goreleaser.docker.yml > .goreleaser.yml
 	'$(GORELEASER)' release $(GORELEASER_OPTS)
 
 .PHONY: release-default
-release-default: release-precheck release-notes release-in-docker release-docker
+release-default: release-in-docker release-docker
 
 # Clean
 
