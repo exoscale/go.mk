@@ -62,28 +62,9 @@ else
 	'$(INCLUDE_PATH)/git-tag.sh'
 endif
 
-# execute release procedures that don't require docker
-release-non-docker: release-precheck release-notes
-	cat .goreleaser.main.yml .goreleaser.non-docker.yml > .goreleaser.yml
-	'$(GORELEASER)' release $(GORELEASER_OPTS)
-
-# execute release procedures inside a docker container
-release-in-docker:
-	docker run \
-	    --env GITHUB_TOKEN=$(GITHUB_TOKEN) \
-	    --volume=$(CURDIR):/src:ro \
-	    --volume=src-snapshot:/snapshot \
-	    --volume=build-cache:/root/.cache/go-build \
-	    --volume=go-mod-cache:/root/go/pkg/mod \
-	    $(EXOSCALE_DOCKER_REGISTRY)/exoscale/go.mk
-
-# execute release procedures that require docker
-release-docker: release-precheck release-notes
-	cat .goreleaser.main.yml .goreleaser.docker.yml > .goreleaser.yml
-	'$(GORELEASER)' release $(GORELEASER_OPTS)
-
 .PHONY: release-default
-release-default: release-in-docker release-docker
+release-default: release-precheck release-notes
+	'$(GORELEASER)' release $(GORELEASER_OPTS)
 
 # Clean
 
