@@ -3,7 +3,6 @@ inputs:
   registry_username:
     description: 'registry username'
     required: true
-    default: 'Default value 1'
   registry_password:
     description: 'registry password'
     required: true
