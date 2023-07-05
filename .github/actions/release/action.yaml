@@ -1,4 +1,15 @@
 name: "Release"
+inputs:
+  registry_username:
+    description: 'registry username'
+    required: true
+    default: 'Default value 1'
+  registry_password:
+    description: 'registry password'
+    required: true
+  release_github_token:
+    description: 'github token with permissions "Contents: read-write" on release repos'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -7,8 +18,8 @@ runs:
     - name: Login to Docker Hub
       uses: docker/login-action@v2
       env:
-        username: ${{ env.DOCKERHUB_USERNAME }}
-        password: ${{ env.DOCKERHUB_TOKEN }}
+        username: ${{ inputs.registry_username }}
+        password: ${{ inputs.registry_password }}
 
     - name: Compute goreleaser cache key
       run: |
@@ -34,4 +45,4 @@ runs:
     - run: make release
       shell: bash
       env:
-        GITHUB_TOKEN: ${{ env.RELEASE_GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.release_github_token }}
