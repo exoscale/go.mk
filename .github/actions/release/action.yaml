@@ -11,6 +11,7 @@ runs:
       run: |
         echo "GORELEASER_CACHE_KEY=$(make --just-print install-goreleaser | tr --delete [:space:] | base32 --wrap 0)" >> $GITHUB_OUTPUT
       id: goreleaser-cache-key
+      shell: bash
 
     - name: Cache goreleaser
       id: cache-goreleaser
