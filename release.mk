@@ -62,8 +62,13 @@ else
 	'$(INCLUDE_PATH)/git-tag.sh'
 endif
 
+# The `git add --update vendor/` line works around https://groups.google.com/g/golang-nuts/c/yA94qG1xcsc
+# If there are only CRLF and LF line ending changes git will consider the working tree clean after this.
+# If there are actual changes in the vendored go modules they will be added to the staging area
+# and thus goreleaser will fail as intended in this case.
 .PHONY: release-default
 release-default: release-precheck release-notes
+	if [ -d "vendor" ]; then git add --update vendor/; fi
 	'$(GORELEASER)' release $(GORELEASER_OPTS)
 
 # Clean
