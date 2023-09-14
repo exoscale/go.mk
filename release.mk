@@ -68,7 +68,7 @@ endif
 # and thus goreleaser will fail as intended in this case.
 .PHONY: release-default
 release-default: release-precheck release-notes
-	git add --update vendor/
+	if [ -d "vendor" ]; then git add --update vendor/; fi
 	'$(GORELEASER)' release $(GORELEASER_OPTS)
 
 # Clean
