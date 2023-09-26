@@ -1,4 +1,5 @@
 {
+  "rootDir": ".aptlydata",
   "downloadConcurrency": 4,
   "downloadSpeedLimit": 0,
   "downloadRetries": 0,
