@@ -1,1 +1,4 @@
 Makefile.test
+
+# the generated aptly configuration
+scripts/aptly.conf
