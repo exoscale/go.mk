@@ -15,8 +15,30 @@ else
 fi
 
 # Check if the artifact ends with ".deb"
-if [ ! "${artifact##*.}" = "deb" ]; then
+if [ "${artifact%%.deb}" = "${artifact}" ]; then
     exit 0
+fi
+
+# The apt package manager only recognizes 'armhf' as a value for armv6 and armv7 packages.
+# Since armv6 binaries will run on armv7 cpus, we only publish the armv6 package as the
+# apt repo cannot have two packages for the 'same' armhf architecture
+if [ "${artifact%%armv7.deb}" != "${artifact}" ]; then
+    echo "not publishing armv7 package for debian in favor of armv6 package"
+    exit 0
+fi
+
+# goreleaser executes this script in parallel for each artifact but aptly repos can't be updated in parallel
+LOCK_FILE="/tmp/publish-deb-artifact-to-sos.lock"
+
+release_lock() {
+    flock -u 200
+}
+
+# Acquire an exclusive lock on the lock file, or wait until it's available
+exec 200>"$LOCK_FILE"
+if ! flock -n 200; then
+    # Set up a trap to release the lock before exiting
+    trap release_lock EXIT
 fi
 
 aptlyrepo=release-repo
@@ -58,21 +80,29 @@ mirrorrepo() {
         $aptlymirror
 }
 
-$aptlycmd repo create $aptlyrepo
+if ! $aptlycmd repo show $aptlyrepo 2>/dev/null; then
+    isrepounpublished=1
 
-if mirrorrepo; then
-    $aptlycmd repo import $aptlymirror $aptlyrepo "$package_filter"
+    $aptlycmd repo create $aptlyrepo
+
+    if mirrorrepo; then
+        $aptlycmd repo import $aptlymirror $aptlyrepo "$package_filter"
+    fi
 fi
 
 $aptlycmd repo add $aptlyrepo $artifact
 
-$aptlycmd publish repo \
-    $gpgkeyflag \
-    -distribution=$aptlydistro \
-    $aptlyrepo \
-    $aptlyremote
+if [ $isrepounpublished ]; then
+    $aptlycmd publish repo \
+        $gpgkeyflag \
+        -distribution=$aptlydistro \
+        $aptlyrepo \
+        $aptlyremote
+fi
 
 # this step cleans up package files that are unreferenced
 $aptlycmd publish update \
     $aptlydistro \
     $aptlyremote
+
+release_lock
