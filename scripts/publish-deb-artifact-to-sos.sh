@@ -42,7 +42,7 @@ if ! flock -n 200; then
 fi
 
 aptlyrepo=release-repo
-aptlyremote="s3:${bucketname}:"
+aptlyremote="s3:${bucketname}:${repoprefix}"
 zone="ch-gva-2"
 archiveurl=https://sos-${zone}.exo.io/${bucketname}/${repoprefix}
 aptlymirror=${aptlyrepo}-mirror
@@ -50,11 +50,12 @@ aptlydistro=stable
 aptlyconfig="go.mk/scripts/aptly.conf"
 aptlycmd="aptly -config=$aptlyconfig"
 gpgkeyflag='-gpg-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41'
+archflag='-architectures=amd64,arm64,armhf'
 
 # customize aptly.conf
-sed -i "s/PLACEHOLDER_FOR_BUCKETNAME/$bucketname/" "$aptlyconfig"
-sed -i "s/PLACEHOLDER_FOR_ZONE/$zone/" "$aptlyconfig"
-sed -i "s/PLACEHOLDER_FOR_PREFIX/${repoprefixescaped}/" "$aptlyconfig"
+sed -e "s/PLACEHOLDER_FOR_BUCKETNAME/$bucketname/" \
+    -e "s/PLACEHOLDER_FOR_ZONE/$zone/" \
+    -e "s/PLACEHOLDER_FOR_PREFIX/${repoprefixescaped}/" ${aptlyconfig}.template >$aptlyconfig
 
 # Get the 10 latest Git tags
 latest_tags=$(git tag --sort=-v:refname | head -n $nrversionstokeep)
@@ -90,11 +91,14 @@ if ! $aptlycmd repo show $aptlyrepo 2>/dev/null; then
     fi
 fi
 
-$aptlycmd repo add $aptlyrepo $artifact
+$aptlycmd repo add \
+    $aptlyrepo \
+    $artifact
 
 if [ $isrepounpublished ]; then
     $aptlycmd publish repo \
         $gpgkeyflag \
+        $archflag \
         -distribution=$aptlydistro \
         $aptlyrepo \
         $aptlyremote
@@ -102,6 +106,8 @@ fi
 
 # this step cleans up package files that are unreferenced
 $aptlycmd publish update \
+    $gpgkeyflag \
+    $archflag \
     $aptlydistro \
     $aptlyremote
 
