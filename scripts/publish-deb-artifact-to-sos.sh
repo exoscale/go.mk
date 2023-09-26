@@ -28,95 +28,88 @@ if [ "${artifact%%armv7.deb}" != "${artifact}" ]; then
 fi
 
 # goreleaser executes this script in parallel for each artifact but aptly repos can't be updated in parallel
-LOCK_FILE="/tmp/publish-deb-artifact-to-sos.lock"
+(
+    # Acquire an exclusive lock on the lock file, or wait until it's available
+    flock -w 1200 9 || exit 1
 
-release_lock() {
-    flock -u 200
-}
-
-# Acquire an exclusive lock on the lock file, or wait until it's available
-exec 200>"$LOCK_FILE"
-if ! flock -n 200; then
-    # Set up a trap to release the lock before exiting
-    trap release_lock EXIT
-fi
-
-# install aptly if not available
-if ! command -v aptly; then
-    apt-get update
-    apt-get install -y aptly
-fi
-
-aptlyrepo=release-repo
-aptlyremote="s3:${bucketname}:"
-zone="ch-gva-2"
-archiveurl=https://sos-${zone}.exo.io/${bucketname}/${repoprefix}
-aptlymirror=${aptlyrepo}-mirror
-aptlydistro=stable
-aptlyconfig="go.mk/scripts/aptly.conf"
-aptlycmd="aptly -config=$aptlyconfig"
-#TODO(sauterp) temporary
-# gpgkeyflag='-gpg-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41'
-gpgkeyflag="-skip-signing"
-archflag='-architectures=amd64,arm64,armhf'
-
-# customize aptly.conf
-sed -e "s/PLACEHOLDER_FOR_BUCKETNAME/$bucketname/" \
-    -e "s/PLACEHOLDER_FOR_ZONE/$zone/" \
-    -e "s/PLACEHOLDER_FOR_PREFIX/${repoprefixescaped}/" ${aptlyconfig}.template >$aptlyconfig
-
-# Get the 10 latest Git tags
-latest_tags=$(git tag --sort=-v:refname | head -n $nrversionstokeep)
-
-# Create a package query filter for aptly
-package_filter=""
-for tag in $latest_tags; do
-    stripped_tag=$(expr "$tag" : '.\(.*\)')
-    if [ $first_tag_set ]; then
-        package_filter+=" | "
+    # install aptly if not available
+    if ! command -v aptly; then
+        apt-get update
+        apt-get install -y aptly
     fi
-    package_filter+="exoscale-cli (= $stripped_tag)"
-    first_tag_set=1
-done
 
-mirrorrepo() {
-    $aptlycmd mirror create \
-        $aptlymirror \
-        $archiveurl \
-        $aptlydistro
+    aptlyrepo=release-repo
+    aptlyremote="s3:${bucketname}:"
+    zone="ch-gva-2"
+    archiveurl=https://sos-${zone}.exo.io/${bucketname}/${repoprefix}
+    aptlymirror=${aptlyrepo}-mirror
+    aptlydistro=stable
+    aptlyconfig="go.mk/scripts/aptly.conf"
+    aptlycmd="aptly -config=$aptlyconfig"
+    #TODO(sauterp) temporary
+    # gpgkeyflag='-gpg-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41'
+    gpgkeyflag="-skip-signing"
+    archflag='-architectures=amd64,arm64,armhf'
 
-    $aptlycmd mirror update \
-        $aptlymirror
-}
+    # customize aptly.conf
+    sed -e "s/PLACEHOLDER_FOR_BUCKETNAME/$bucketname/" \
+        -e "s/PLACEHOLDER_FOR_ZONE/$zone/" \
+        -e "s/PLACEHOLDER_FOR_PREFIX/${repoprefixescaped}/" ${aptlyconfig}.template >$aptlyconfig
 
-if ! $aptlycmd repo show $aptlyrepo 2>/dev/null; then
-    isrepounpublished=1
+    # Get the 10 latest Git tags
+    latest_tags=$(git tag --sort=-v:refname | head -n $nrversionstokeep)
 
-    $aptlycmd repo create $aptlyrepo
+    # Create a package query filter for aptly
+    package_filter=""
+    for tag in $latest_tags; do
+        stripped_tag=$(expr "$tag" : '.\(.*\)')
+        if [ $first_tag_set ]; then
+            package_filter+=" | "
+        fi
+        package_filter+="exoscale-cli (= $stripped_tag)"
+        first_tag_set=1
+    done
 
-    if mirrorrepo; then
-        $aptlycmd repo import $aptlymirror $aptlyrepo "$package_filter"
+    mirrorrepo() {
+        $aptlycmd mirror create \
+            $aptlymirror \
+            $archiveurl \
+            $aptlydistro
+
+        $aptlycmd mirror update \
+            $aptlymirror
+    }
+
+    if ! $aptlycmd repo show $aptlyrepo 2>/dev/null; then
+        isrepounpublished=1
+
+        $aptlycmd repo create $aptlyrepo
+
+        if mirrorrepo; then
+            $aptlycmd repo import $aptlymirror $aptlyrepo "$package_filter"
+        fi
     fi
-fi
 
-$aptlycmd repo add \
-    $aptlyrepo \
-    $artifact
+    $aptlycmd repo add \
+        $aptlyrepo \
+        $artifact
 
-if [ $isrepounpublished ]; then
-    $aptlycmd publish repo \
+    if [ $isrepounpublished ]; then
+        $aptlycmd publish repo \
+            $gpgkeyflag \
+            $archflag \
+            -distribution=$aptlydistro \
+            $aptlyrepo \
+            $aptlyremote
+    fi
+
+    # this step cleans up package files that are unreferenced
+    $aptlycmd publish update \
         $gpgkeyflag \
         $archflag \
-        -distribution=$aptlydistro \
-        $aptlyrepo \
+        $aptlydistro \
         $aptlyremote
-fi
 
-# this step cleans up package files that are unreferenced
-$aptlycmd publish update \
-    $gpgkeyflag \
-    $archflag \
-    $aptlydistro \
-    $aptlyremote
+) 9>/tmp/publish-deb-artifact-to-sos.lock
 
-release_lock
+rm -f /tmp/publish-deb-artifact-to-sos.lock
