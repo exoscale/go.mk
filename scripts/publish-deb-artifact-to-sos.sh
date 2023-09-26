@@ -41,6 +41,12 @@ if ! flock -n 200; then
     trap release_lock EXIT
 fi
 
+# install aptly if not available
+if ! command -v aptly; then
+    apt-get update
+    apt-get install -y aptly
+fi
+
 aptlyrepo=release-repo
 aptlyremote="s3:${bucketname}:"
 zone="ch-gva-2"
