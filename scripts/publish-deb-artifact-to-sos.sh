@@ -64,9 +64,9 @@ fi
     for tag in $latest_tags; do
         stripped_tag=$(expr "$tag" : '.\(.*\)')
         if [ $first_tag_set ]; then
-            package_filter+=" | "
+            package_filter="${package_filter} | "
         fi
-        package_filter+="exoscale-cli (= $stripped_tag)"
+        package_filter="${package_filter} exoscale-cli (= ${stripped_tag})"
         first_tag_set=1
     done
 
