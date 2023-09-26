@@ -42,7 +42,7 @@ if ! flock -n 200; then
 fi
 
 aptlyrepo=release-repo
-aptlyremote="s3:${bucketname}:${repoprefix}"
+aptlyremote="s3:${bucketname}:"
 zone="ch-gva-2"
 archiveurl=https://sos-${zone}.exo.io/${bucketname}/${repoprefix}
 aptlymirror=${aptlyrepo}-mirror
