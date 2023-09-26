@@ -34,8 +34,8 @@ fi
 
     # install aptly if not available
     if ! command -v aptly; then
-        apt-get update
-        apt-get install -y aptly
+        sudo apt-get update
+        sudo apt-get install -y aptly
     fi
 
     aptlyrepo=release-repo
