@@ -41,7 +41,6 @@ if ! flock -n 200; then
     trap release_lock EXIT
 fi
 
-aptlydir=$(echo $(pwd)/.aptlydata | sed 's#/#\\\/#g')
 aptlyrepo=release-repo
 aptlyremote="s3:${bucketname}:"
 zone="ch-gva-2"
@@ -56,7 +55,6 @@ archflag='-architectures=amd64,arm64,armhf'
 # customize aptly.conf
 sed -e "s/PLACEHOLDER_FOR_BUCKETNAME/$bucketname/" \
     -e "s/PLACEHOLDER_FOR_ZONE/$zone/" \
-    -e "s/PLACEHOLDER_FOR_ROOT_DIR/$aptlydir/" \
     -e "s/PLACEHOLDER_FOR_PREFIX/${repoprefixescaped}/" ${aptlyconfig}.template >$aptlyconfig
 
 # Get the 10 latest Git tags

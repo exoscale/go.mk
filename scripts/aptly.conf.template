@@ -1,5 +1,4 @@
 {
-  "rootDir": "PLACEHOLDER_FOR_ROOT_DIR",
   "downloadConcurrency": 4,
   "downloadSpeedLimit": 0,
   "downloadRetries": 0,
