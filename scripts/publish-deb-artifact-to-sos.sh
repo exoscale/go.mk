@@ -46,8 +46,7 @@ fi
     aptlydistro=stable
     aptlyconfig="go.mk/scripts/aptly.conf"
     aptlycmd="aptly -config=$aptlyconfig"
-    #TODO(sauterp) temporary
-    # gpgkeyflag='-gpg-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41'
+    gpgkeyflag='-gpg-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41'
     gpgkeyflag="-skip-signing"
     archflag='-architectures=amd64,arm64,armhf'
 
