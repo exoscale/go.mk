@@ -9,6 +9,10 @@ inputs:
   release_github_token:
     description: 'github token with permissions "Contents: read-write" on release repos'
     required: true
+  exoscale_api_key:
+    required: false
+  exoscale_api_secret:
+    required: false
 runs:
   using: "composite"
   steps:
@@ -46,3 +50,5 @@ runs:
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.release_github_token }}
+        EXOSCALE_API_KEY: ${{ inputs.exoscale_api_key }}
+        EXOSCALE_API_SECRET: ${{ inputs.exoscale_api_secret }}
