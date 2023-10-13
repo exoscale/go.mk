@@ -13,6 +13,8 @@ if [ -z "$4" ]; then
 else
     nrversionstokeep=$4
 fi
+# we subtract 1 to account for the added version
+let "nrversionstokeep = $nrversionstokeep - 1"
 
 # Check if the artifact ends with ".deb"
 if [ "${artifact%%.deb}" = "${artifact}" ]; then
@@ -64,6 +66,7 @@ fi
         if [ $first_tag_set ]; then
             package_filter="${package_filter} | "
         fi
+        # TODO (sc-78178) parse the package name from the artifact
         package_filter="${package_filter} exoscale-cli (= ${stripped_tag})"
         first_tag_set=1
     done
