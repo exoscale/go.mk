@@ -7,6 +7,11 @@ set -e
 artifact=$1
 bucketname=$2
 repoprefix=$3
+if [ -z "$4" ]; then
+    nrversionstokeep=10
+else
+    nrversionstokeep=$4
+fi
 
 # Check if the artifact ends with ".rpm"
 if [ "${artifact%%.rpm}" = "${artifact}" ]; then
@@ -23,22 +28,6 @@ fi
         sudo apt-get install -y createrepo_c rclone
     fi
 
-    # Get the 10 latest Git tags
-    # latest_tags=$(git tag --sort=-v:refname | head -n $nrversionstokeep)
-
-    # Create a package query filter for aptly
-    # package_filter=""
-    # for tag in $latest_tags; do
-    #     stripped_tag=$(expr "$tag" : '.\(.*\)')
-    #     if [ $first_tag_set ]; then
-    #         package_filter="${package_filter} | "
-    #     fi
-    #     package_filter="${package_filter} exoscale-cli (= ${stripped_tag})"
-    #     first_tag_set=1
-    # done
-
-    # TODO (sc-78178) only keep last 10 versions
-
     reponame=rpmrepo
     # TODO (sc-78178) remove sauterp
     bucketname=sauterp-exoscale-packages
@@ -54,8 +43,31 @@ fi
     $rclonecmd sync -vv -P $reponame:${bucketname}/$repoprefix $repodir
 
     cp $artifact $repodir
+
+    # we only want to keep a limited number of versions of the package
+    # therefore we have to list, sort and then delete older versions
+    pkgname=$(echo $artifact | sed -n 's|.*/\(.*\)_[0-9]*\.[0-9]*\.[0-9]*_linux_.*\.rpm|\1|p')
+    pkgarch=$(echo $artifact | sed -n 's|.*/.*_[0-9]*\.[0-9]*\.[0-9]*_linux_\(.*\)\.rpm|\1|p')
+
+    sorted_files=$(ls rpmrepo/${pkgname}_*_linux_${pkgarch}.rpm | sort --version-sort)
+
+    # Get the count of all files
+    file_count=$(echo "$sorted_files" | wc -l)
+
+    # Calculate the number of files to delete
+    let "delete_count = $file_count - $nrversionstokeep"
+
+    if [[ $delete_count -gt 0 ]]; then
+        # delete some older versions
+        echo "$sorted_files" | head -n $delete_count | xargs -d '\n' rm -f --
+    fi
+
     createrepo_c $repodir
-    gpg --default-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41 --detach-sign --armor ${repodir}/repodata/repomd.xml
+    filetosign=${repodir}/repodata/repomd.xml
+
+    # remove the old signature if it exists
+    rm -f ${filetosign}.asc
+    gpg --default-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41 --detach-sign --armor $filetosign
 
     $rclonecmd sync -vv -P $repodir $reponame:${bucketname}/$repoprefix
 ) 9>/tmp/publish-rpm-artifact-to-sos.lock
