@@ -25,7 +25,7 @@ fi
 
     if ! command -v createrepo_c || ! command -v rclone; then
         sudo apt-get update
-        sudo apt-get install -y createrepo_c rclone
+        sudo apt-get install -y createrepo-c rclone
     fi
 
     reponame=rpmrepo
