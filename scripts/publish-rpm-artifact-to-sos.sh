@@ -21,7 +21,7 @@ fi
 # goreleaser executes this script in parallel for each artifact but S3 repos can't be updated in parallel
 (
     # Acquire an exclusive lock on the lock file, or wait until it's available
-    flock -w 1200 10 || exit 1
+    flock -w 1200 8 || exit 1
 
     if ! command -v createrepo_c || ! command -v rclone; then
         sudo apt-get update
@@ -71,6 +71,6 @@ fi
     # gpg --default-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41 --detach-sign --armor $filetosign
 
     $rclonecmd sync -vv -P $repodir $reponame:${bucketname}/$repoprefix
-) 10>/tmp/publish-rpm-artifact-to-sos.lock
+) 8>/tmp/publish-rpm-artifact-to-sos.lock
 
 rm -f /tmp/publish-rpm-artifact-to-sos.lock
