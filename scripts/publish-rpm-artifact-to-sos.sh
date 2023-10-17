@@ -67,7 +67,8 @@ fi
 
     # remove the old signature if it exists
     rm -f ${filetosign}.asc
-    gpg --default-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41 --detach-sign --armor $filetosign
+    # TODO (sc-78178) uncomment
+    # gpg --default-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41 --detach-sign --armor $filetosign
 
     $rclonecmd sync -vv -P $repodir $reponame:${bucketname}/$repoprefix
 ) 9>/tmp/publish-rpm-artifact-to-sos.lock
