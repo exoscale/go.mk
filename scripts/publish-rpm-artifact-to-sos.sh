@@ -74,7 +74,7 @@ fi
 
     $rclonecmd sync -vv -P ${repodir} "${reponame}:${bucketname}/${repoprefix}"
 
-    sync
+    rm -rf ${repodir}/.repodata
 ) 8>/tmp/publish-rpm-artifact-to-sos.lock
 
 rm -f /tmp/publish-rpm-artifact-to-sos.lock
