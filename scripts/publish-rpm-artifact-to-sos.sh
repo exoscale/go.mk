@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # this script assumes, you are running it from the parent directory of this repository
 
@@ -70,7 +70,7 @@ fi
     # TODO (sc-78178) uncomment
     # gpg --default-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41 --detach-sign --armor $filetosign
 
-    $rclonecmd sync -vv -P "$repodir" "$reponame:${bucketname}/$repoprefix"
+    $rclonecmd sync -vv -P ${repodir} "${reponame}:${bucketname}\/${repoprefix}"
 ) 8>/tmp/publish-rpm-artifact-to-sos.lock
 
 rm -f /tmp/publish-rpm-artifact-to-sos.lock
