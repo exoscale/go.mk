@@ -49,20 +49,20 @@ fi
     pkgname=$(echo $artifact | sed -n 's|.*/\(.*\)_[0-9]*\.[0-9]*\.[0-9]*_linux_.*\.rpm|\1|p')
     pkgarch=$(echo $artifact | sed -n 's|.*/.*_[0-9]*\.[0-9]*\.[0-9]*_linux_\(.*\)\.rpm|\1|p')
 
-    sorted_files=$(ls rpmrepo/${pkgname}_*_linux_${pkgarch}.rpm | sort --version-sort)
+    sorted_files="$(ls ${repodir}/${pkgname}_*_linux_${pkgarch}.rpm | sort --version-sort --reverse)"
 
     # Get the count of all files
     file_count=$(echo "$sorted_files" | wc -l)
 
     # Calculate the number of files to delete
-    let "delete_count = $file_count - $nrversionstokeep"
+    delete_count=$((${file_count} - ${nrversionstokeep}))
 
     if [[ $delete_count -gt 0 ]]; then
         # delete some older versions
         echo "$sorted_files" | head -n $delete_count | xargs -d '\n' rm -f --
     fi
 
-    createrepo_c $repodir
+    createrepo_c "${repodir}"
     filetosign=${repodir}/repodata/repomd.xml
 
     # remove the old signature if it exists
