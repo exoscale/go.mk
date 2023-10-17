@@ -57,7 +57,7 @@ fi
     # Calculate the number of files to delete
     delete_count=$((${file_count} - ${nrversionstokeep}))
 
-    if [[ $delete_count -gt 0 ]]; then
+    if [ $delete_count -gt 0 ]; then
         # delete some older versions
         echo "$sorted_files" | head -n $delete_count | xargs -d '\n' rm -f --
     fi
