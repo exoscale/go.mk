@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # this script assumes, you are running it from the parent directory of this repository
 
