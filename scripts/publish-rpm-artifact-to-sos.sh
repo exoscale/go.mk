@@ -64,7 +64,7 @@ fi
         echo "$sorted_files" | head -n $delete_count | xargs -d '\n' rm -f --
     fi
 
-    createrepo_c "${repodir}"
+    createrepo_c --ignore-lock "${repodir}"
     filetosign=${repodir}/repodata/repomd.xml
 
     # remove the old signature if it exists
@@ -73,8 +73,6 @@ fi
     # gpg --default-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41 --detach-sign --armor $filetosign
 
     $rclonecmd sync -vv -P ${repodir} "${reponame}:${bucketname}/${repoprefix}"
-
-    rm -rf ${repodir}/.repodata
 ) 8>/tmp/publish-rpm-artifact-to-sos.lock
 
 rm -f /tmp/publish-rpm-artifact-to-sos.lock
