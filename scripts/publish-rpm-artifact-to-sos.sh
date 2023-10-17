@@ -2,7 +2,9 @@
 
 # this script assumes, you are running it from the parent directory of this repository
 
-set -e
+# TODO (sc-78178) revert
+set -ex
+#set -e
 
 artifact=$1
 bucketname=$2
