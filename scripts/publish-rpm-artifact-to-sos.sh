@@ -64,7 +64,7 @@ fi
         echo "$sorted_files" | head -n $delete_count | xargs -d '\n' rm -f --
     fi
 
-    createrepo_c --ignore-lock "${repodir}"
+    createrepo_c "${repodir}"
     filetosign=${repodir}/repodata/repomd.xml
 
     # remove the old signature if it exists
