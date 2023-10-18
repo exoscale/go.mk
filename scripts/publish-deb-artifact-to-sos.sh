@@ -14,7 +14,7 @@ else
     nrversionstokeep=$4
 fi
 # we subtract 1 to account for the added version
-let "nrversionstokeep = $nrversionstokeep - 1"
+nrversionstokeep=$((nrversionstokeep - 1))
 
 # Check if the artifact ends with ".deb"
 if [ "${artifact%%.deb}" = "${artifact}" ]; then
