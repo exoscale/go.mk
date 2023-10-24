@@ -114,5 +114,3 @@ fi
         $aptlyremote
 
 ) 9>/tmp/publish-deb-artifact-to-sos.lock
-
-rm -f /tmp/publish-deb-artifact-to-sos.lock
