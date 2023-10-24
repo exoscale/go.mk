@@ -2,7 +2,7 @@
 
 # this script assumes, you are running it from the parent directory of this repository
 
-#set -e
+set -e
 
 artifact=$1
 bucketname=$2
@@ -34,9 +34,6 @@ fi
     repodir=./rpmrepo/
     rcloneconf=./rclone.config
     rclonecmd="rclone --config=${rcloneconf}"
-    # TODO (sc-78178) customize
-    #     zone="ch-gva-2"
-    #     archiveurl=https://sos-${zone}.exo.io/${bucketname}/${repoprefix}
     $rclonecmd config create $reponame s3 provider Other env_auth true endpoint sos-ch-gva-2.exo.io location_constraint ch-gva-2 acl public-read
 
     mkdir -p $repodir
@@ -49,7 +46,7 @@ fi
     pkgname=$(echo $artifact | sed -n 's|.*/\(.*\)_[0-9]*\.[0-9]*\.[0-9]*_linux_.*\.rpm|\1|p')
     pkgarch=$(echo $artifact | sed -n 's|.*/.*_[0-9]*\.[0-9]*\.[0-9]*_linux_\(.*\)\.rpm|\1|p')
 
-    sorted_files="$(ls ${repodir}/${pkgname}_*_linux_${pkgarch}.rpm | sort --version-sort --reverse)"
+    sorted_files="$(ls ${repodir}/${pkgname}_*_linux_${pkgarch}.rpm | sort --version-sort)"
 
     # Get the count of all files
     file_count=$(echo "$sorted_files" | wc -l)
@@ -67,8 +64,7 @@ fi
 
     # remove the old signature if it exists
     rm -f ${filetosign}.asc
-    # TODO (sc-78178) uncomment
-    # gpg --default-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41 --detach-sign --armor $filetosign
+    gpg --default-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41 --detach-sign --armor $filetosign
 
     $rclonecmd sync -vv -P ${repodir} "${reponame}:${bucketname}/${repoprefix}"
 ) 8>/tmp/publish-rpm-artifact-to-sos.lock

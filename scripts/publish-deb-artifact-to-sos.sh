@@ -15,6 +15,7 @@ else
 fi
 # we subtract 1 to account for the added version
 nrversionstokeep=$((nrversionstokeep - 1))
+projectname=$5
 
 # Check if the artifact ends with ".deb"
 if [ "${artifact%%.deb}" = "${artifact}" ]; then
@@ -48,9 +49,7 @@ fi
     aptlydistro=stable
     aptlyconfig="go.mk/scripts/aptly.conf"
     aptlycmd="aptly -config=$aptlyconfig"
-    # TODO (sc-78178) revert
-    # gpgkeyflag='-gpg-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41'
-    gpgkeyflag='-skip-signing'
+    gpgkeyflag='-gpg-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41'
     archflag='-architectures=amd64,arm64,armhf'
 
     # customize aptly.conf
@@ -68,8 +67,7 @@ fi
         if [ $first_tag_set ]; then
             package_filter="${package_filter} | "
         fi
-        # TODO (sc-78178) parse the package name from the artifact
-        package_filter="${package_filter} exoscale-cli (= ${stripped_tag})"
+        package_filter="${package_filter} ${projectname} (= ${stripped_tag})"
         first_tag_set=1
     done
 
