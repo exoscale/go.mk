@@ -29,8 +29,6 @@ fi
     fi
 
     reponame=rpmrepo
-    # TODO (sc-78178) remove sauterp
-    bucketname=sauterp-exoscale-packages
     repodir=./rpmrepo/
     rcloneconf=./rclone.config
     rclonecmd="rclone --config=${rcloneconf}"

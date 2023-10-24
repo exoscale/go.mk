@@ -7,10 +7,8 @@ RELEASE_NOTES := $(RELEASE_DIR)/notes.md
 # REF: https://github.com/goreleaser/goreleaser/
 
 GORELEASER_VERSION ?= v1.21.2
-# TODO (sc-78178) revert debug flag
 GORELEASER_OPTS ?= \
 	--rm-dist \
-	--debug \
 	--release-notes '$(RELEASE_NOTES)'
 ifneq ($(DRYRUN),)
 GORELEASER_OPTS += --snapshot
