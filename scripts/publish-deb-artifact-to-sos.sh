@@ -13,6 +13,9 @@ if [ -z "$4" ]; then
 else
     nrversionstokeep=$4
 fi
+# we subtract 1 to account for the added version
+nrversionstokeep=$((nrversionstokeep - 1))
+projectname=$5
 
 # Check if the artifact ends with ".deb"
 if [ "${artifact%%.deb}" = "${artifact}" ]; then
@@ -64,7 +67,7 @@ fi
         if [ $first_tag_set ]; then
             package_filter="${package_filter} | "
         fi
-        package_filter="${package_filter} exoscale-cli (= ${stripped_tag})"
+        package_filter="${package_filter} ${projectname} (= ${stripped_tag})"
         first_tag_set=1
     done
 
@@ -109,5 +112,3 @@ fi
         $aptlyremote
 
 ) 9>/tmp/publish-deb-artifact-to-sos.lock
-
-rm -f /tmp/publish-deb-artifact-to-sos.lock
