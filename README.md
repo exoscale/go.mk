@@ -12,27 +12,77 @@ This repository is an attempt to act as a GNU make common ground for exoscale's 
 You need to use GNU make (also known as `gmake`) version 3.82+, ideally 4+.
 
 
-### Adding the required git submodule
+### Adding `go.mk` to your repo
+
+There are two ways to use `go.mk` in your project.
+You can either use it as a git submodule or configure your Makefile to pull and update go.mk automatically.
+We recommend the Makefile approach.
+It has the advantage that if you update `go.mk` to a newer version, make will automatically ensure the newer version is pulled and you don't need to run any extra git submodule commands.
+
+#### Adding `go.mk` as a git submodule
 
 You need to add this repository as a submodule for your project:
 
     git submodule add git@github.com:exoscale/go.mk.git
 
 
-For more informations about git submodules please refer to the documentation
+For more information about git submodules please refer to the documentation
 page :
 
 - https://git-scm.com/book/en/v2/Git-Tools-Submodules
 
+#### Configuring make to pull `go.mk`
+
+Add a line with `/go.mk` to your `.gitignore` file and
+add the following lines at the top of your `Makefile`(or create it):
+
+``` makefile
+GO_MK_REF := v1.0.0
+
+# make go.mk a dependency for all targets
+.EXTRA_PREREQS = go.mk
+
+ifndef MAKE_RESTARTS
+# This section will be processed the first time that make reads this file.
+
+# This causes make to re-read the Makefile and all included
+# makefiles after go.mk has been cloned.
+Makefile:
+	@touch Makefile
+endif
+
+.PHONY: go.mk
+.ONESHELL:
+go.mk:
+	@if [ ! -d "go.mk" ]; then
+		git clone https://github.com/exoscale/go.mk.git
+	fi
+	@cd go.mk
+	@if ! git show-ref --quiet --verify "refs/heads/${GO_MK_REF}"; then
+		git fetch
+	fi
+	@if ! git show-ref --quiet --verify "refs/tags/${GO_MK_REF}"; then
+		git fetch --tags
+	fi
+	git checkout --quiet ${GO_MK_REF}
+```
+
+You can replace the `GO_MK_REF` variable with whatever version tag, commit or branch of `go.mk` that you would like to use.
 
 ### Initializing go.mk
 
-Create your own `Makefile` with the following contents:
+If you are using `go.mk` as a submodule add this to your `Makefile`:
 
     include go.mk/init.mk
 
+If you are using the `Makefile`-only approach you need an extra line:
 
-Or if `Makefile` is in a subdirectory:
+    go.mk/init.mk:
+    include go.mk/init.mk
+
+(Make sure to add every included file this way or `make` will error)
+
+If `Makefile` is in a subdirectory:
 
     INCLUDE_PATH=../go.mk
     include $(INCLUDE_PATH)/init.mk
