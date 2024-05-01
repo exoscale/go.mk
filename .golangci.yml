@@ -2,8 +2,6 @@ run:
   timeout: 10m
 
 linters-settings:
-  golint:
-    min-confidence: 0.3
   goimports:
     local-prefixes: github.com/exoscale
   revive:
@@ -22,10 +20,10 @@ linters:
     - gosimple
     - govet
     - ineffassign
-    - megacheck
     - misspell
     - prealloc
     - revive
     - staticcheck
+    - stylecheck
     - unused
   disable-all: true
