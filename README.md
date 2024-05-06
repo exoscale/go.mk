@@ -68,6 +68,7 @@ go.mk:
 ```
 
 You can replace the `GO_MK_REF` variable with whatever version tag, commit or branch of `go.mk` that you would like to use.
+If you need to debug `go.mk` or for some reason don't want it to update automatically each time you run a make command, you can set `GO_MK_REF` to `HEAD`.
 
 ### Initializing go.mk
 
