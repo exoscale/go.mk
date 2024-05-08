@@ -6,6 +6,3 @@ runs:
       with:
         go-version: 'stable'
         check-latest: true
-    - name: install staticcheck
-      run: make install-staticcheck
-      shell: bash
