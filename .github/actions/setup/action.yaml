@@ -6,6 +6,6 @@ runs:
       with:
         go-version: 'stable'
         check-latest: true
-    - name: install golangci-lint
-      run: make install-golangci-lint
+    - name: install staticcheck
+      run: make install-staticcheck
       shell: bash

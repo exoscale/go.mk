@@ -1,29 +1,18 @@
-## GolangCI-Lint
-#  REF: https://github.com/golangci/golangci-lint/
+## staticcheck
+#  REF: https://staticcheck.dev/
 
-GOLANGCI_LINT_VERSION ?= v1.57.2
-GOLANGCI_LINT_TIMEOUT ?= 5m
-GOLANGCI_LINT_CONFIG ?= go.mk/.golangci.yml
-GOLANGCI_LINT_EXTRA_ARGS ?=
+STATICCHECK_LINT_VERSION ?= 2023.1.7
+STATICCHECK_LINT_EXTRA_ARGS ?=
 
-GOLANGCI_LINT ?= $(shell which golangci-lint)
+STATICCHECK_LINT ?= $(shell which staticcheck)
 
-
-## Targets
-
-# Dependencies
-
-.PHONY: install-golangci-lint installgolangcilint
-installgolangcilint: install-golangci-lint
-install-golangci-lint:
-	'$(GO)' install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
-
-# Lint
+.PHONY: install-staticcheck installstaticchecklint
+installstaticchecklint: install-staticcheck
+install-staticcheck:
+	'$(GO)' install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_LINT_VERSION)
 
 .PHONY: lint
-lint: install-golangci-lint
-	'$(GOLANGCI_LINT)' run \
-	  --timeout $(GOLANGCI_LINT_TIMEOUT) \
-    --config $(GOLANGCI_LINT_CONFIG) \
-	  $(GOLANGCI_LINT_EXTRA_ARGS) \
+lint: install-staticcheck
+	'$(STATICCHECK_LINT)' \
+	  $(STATICCHECK_LINT_EXTRA_ARGS) \
 	  ./...

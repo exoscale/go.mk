@@ -96,7 +96,7 @@ The output of `make help` should look like this:
     clean                          Removes compiled go binaries
     dumpvariables                  Dump configuration variables
     help                           Shows this help
-    installgolangcilint            Installs golangcilint (https://golangci.com/)
+    installstaticchecklint         Installs staticchecklint (https://staticcheck.dev)
     lint                           Lint go code
     test                           Run go tests in silent mode
     test-verbose                   Run go tests in verbose mode
