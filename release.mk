@@ -6,7 +6,7 @@ RELEASE_NOTES := $(RELEASE_DIR)/notes.md
 # GoReleaser
 # REF: https://github.com/goreleaser/goreleaser/
 
-GORELEASER_VERSION ?= v1.21.2
+GORELEASER_VERSION ?= v1.25.1
 GORELEASER_OPTS ?= \
 	--rm-dist \
 	--release-notes '$(RELEASE_NOTES)'
