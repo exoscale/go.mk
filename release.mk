@@ -8,7 +8,7 @@ RELEASE_NOTES := $(RELEASE_DIR)/notes.md
 
 GORELEASER_VERSION ?= v1.26.0
 GORELEASER_OPTS ?= \
-	--rm-dist \
+	--clean \
 	--release-notes '$(RELEASE_NOTES)'
 ifneq ($(DRYRUN),)
 GORELEASER_OPTS += --snapshot
