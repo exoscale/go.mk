@@ -77,3 +77,35 @@ release-default: release-precheck release-notes
 clean::
 	rm -rf '$(CURDIR)/dist'
 	rm -rf '$(RELEASE_DIR)'
+
+CHANGELOG_FILENAME=CHANGELOG.md
+
+.PHONY: prepare-release
+prepare-release:
+	@if [ -z "$(NEW_VERSION)" ]; then \
+        echo "Error: NEW_VERSION is not set. Usage: make $@ NEW_VERSION=vX.Y.Z"; \
+        exit 1; \
+    fi
+	@rm $(CHANGELOG_FILENAME)
+	@git add $(CHANGELOG_FILENAME)
+	@git commit -m "Prepare release"
+	@git tag $(NEW_VERSION)
+	$(MAKE) $(CHANGELOG_FILENAME)
+	@git tag -d $(NEW_VERSION)
+	@git add $(CHANGELOG_FILENAME)
+	@git commit --amend -m  "Prepare release"
+	@git tag $(NEW_VERSION)
+
+TAGS := $(shell git tag | sort --version-sort --reverse)
+INITIAL_COMMIT := $(shell git rev-list --max-parents=0 HEAD))
+
+$(TAGS):
+	./go.mk/scripts/generate-release-notes-for-tag.sh $@ >> $(CHANGELOG_FILENAME)
+
+.PHONY: new-changelog
+new-changelog:
+	@printf "# Changelog\n\n" > $(CHANGELOG_FILENAME)
+
+# creates a new changelog and generates the content for each git tag
+.PHONY: $(CHANGELOG_FILENAME)
+$(CHANGELOG_FILENAME): new-changelog $(TAGS)
