@@ -12,4 +12,4 @@ fi
 
 printf "\n## %s\n" ${CURRENT_TAG}
 
-git log ${PREVIOUS_TAG}..${CURRENT_TAG} --oneline --no-decorate
+git log ${PREVIOUS_TAG}..${CURRENT_TAG} --oneline --no-decorate | sed 's/^/- /'
