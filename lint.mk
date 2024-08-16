@@ -1,7 +1,7 @@
 ## staticcheck
 #  REF: https://staticcheck.dev/
 
-STATICCHECK_LINT_VERSION ?= 2023.1.7
+STATICCHECK_LINT_VERSION ?= 2024.1.1
 STATICCHECK_LINT_EXTRA_ARGS ?=
 
 STATICCHECK_LINT ?= $(shell which staticcheck)
