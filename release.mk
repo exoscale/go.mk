@@ -83,9 +83,9 @@ CHANGELOG_FILENAME=CHANGELOG.md
 .PHONY: prepare-release
 prepare-release:
 	@if [ -z "$(NEW_VERSION)" ]; then \
-        echo "Error: NEW_VERSION is not set. Usage: make $@ NEW_VERSION=vX.Y.Z"; \
-        exit 1; \
-    fi
+		echo "Error: NEW_VERSION is not set. Usage: make $@ NEW_VERSION=vX.Y.Z"; \
+		exit 1; \
+	fi
 	@rm $(CHANGELOG_FILENAME)
 	@git add $(CHANGELOG_FILENAME)
 	@git commit -m "Prepare release"
