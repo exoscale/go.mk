@@ -27,7 +27,7 @@ GORELEASER ?= $(shell which goreleaser)
 installgoreleaser: install-goreleaser
 install-goreleaser:
 	echo Installing/updating 'goreleaser' executable
-	'$(GO)' install github.com/goreleaser/goreleaser@$(GORELEASER_VERSION)
+	'$(GO)' install github.com/goreleaser/goreleaser/v2@$(GORELEASER_VERSION)
 
 # Release
 
