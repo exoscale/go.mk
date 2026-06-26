@@ -51,6 +51,15 @@ fi
     aptlycmd="aptly -config=$aptlyconfig"
     gpgkeyflag='-gpg-key=7100E8BFD6199CE0374CB7F003686F8CDE378D41'
     archflag='-architectures=amd64,arm64,armhf'
+    gpgkeyfp=${gpgkeyflag#-gpg-key=}
+
+    # ensure the signing key is in aptly's trustedkeys.gpg; without this,
+    # `aptly mirror update` fails with "gpgv: Can't check signature: No public key"
+    # because aptly keeps its own keyring separate from gpg's.
+    if ! $aptlycmd keyring show trustedkeys 2>/dev/null | grep -q "$gpgkeyfp"; then
+        gpg --export "$gpgkeyfp" \
+            | gpg --no-default-keyring --keyring trustedkeys.gpg --import
+    fi
 
     # customize aptly.conf
     sed -e "s/PLACEHOLDER_FOR_BUCKETNAME/$bucketname/" \
@@ -91,6 +100,10 @@ fi
         fi
     fi
 
+    # drop any pre-existing matching packages so re-runs on the same tag don't
+    # collide with objects already on SOS.
+    $aptlycmd repo remove $aptlyrepo "$package_filter" 2>/dev/null || true
+
     $aptlycmd repo add \
         $aptlyrepo \
         $artifact
@@ -99,6 +112,7 @@ fi
         $aptlycmd publish repo \
             $gpgkeyflag \
             $archflag \
+            -force-overwrite \
             -distribution=$aptlydistro \
             $aptlyrepo \
             $aptlyremote
@@ -108,6 +122,7 @@ fi
     $aptlycmd publish update \
         $gpgkeyflag \
         $archflag \
+        -force-overwrite \
         $aptlydistro \
         $aptlyremote
 
