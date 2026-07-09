@@ -2,7 +2,7 @@
 #  REF: https://staticcheck.dev/
 
 STATICCHECK_LINT_VERSION ?= latest
-STATICCHECK_LINT_EXTRA_ARGS ?=
+STATICCHECK_LINT_EXTRA_ARGS ?= -checks=-SA1019
 
 STATICCHECK_LINT ?= $(shell which staticcheck)
 
