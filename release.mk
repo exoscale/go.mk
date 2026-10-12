@@ -6,7 +6,7 @@ RELEASE_NOTES := $(RELEASE_DIR)/notes.md
 # GoReleaser
 # REF: https://github.com/goreleaser/goreleaser/
 
-GORELEASER_VERSION ?= v2.10.2
+GORELEASER_VERSION ?= v2.18.3
 GORELEASER_OPTS ?= \
 	--clean \
 	--release-notes '$(RELEASE_NOTES)'
