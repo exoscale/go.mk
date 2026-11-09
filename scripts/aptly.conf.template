@@ -30,7 +30,7 @@
     "PLACEHOLDER_FOR_BUCKETNAME": {
       "region": "PLACEHOLDER_FOR_ZONE",
       "bucket": "PLACEHOLDER_FOR_BUCKETNAME",
-      "endpoint": "sos-PLACEHOLDER_FOR_ZONE.exo.io",
+      "endpoint": "https://sos-PLACEHOLDER_FOR_ZONE.exo.io",
       "awsAccessKeyID": "",
       "awsSecretAccessKey": "",
       "prefix": "PLACEHOLDER_FOR_PREFIX",
