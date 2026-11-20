@@ -51,6 +51,12 @@ vendor:
 vet:
 	'$(GO)' vet ./...
 
+.PHONY: pre-check
+pre-check: lint  ## Lint, format, vet and vendoring checks, as run in CI
+	'$(GO)' fmt ./... && git diff --exit-code
+	'$(GO)' vet ./...
+	'$(GO)' mod tidy && '$(GO)' mod vendor && git diff --exit-code
+
 # Tests
 
 .PHONY: test test-verbose
